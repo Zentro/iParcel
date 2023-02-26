@@ -1,5 +1,7 @@
-logs
 .env
 composer.phar
 composer.lock
 vendor
+
+storage/*
+!.gitkeep

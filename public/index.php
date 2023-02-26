@@ -21,8 +21,10 @@ if (version_compare($phpVersion, '7.0.0', '<'))
 	die("PHP 7.0.0 or newer is required. $phpVersion does not meet this requirement.");
 }
 
-use \DI\ContainerBuilder;
-use \DI\Bridge\Slim\Bridge as AppFactory;
+use Slim\Views\Twig;
+use DI\ContainerBuilder;
+use Slim\Views\TwigMiddleware;
+use DI\Bridge\Slim\Bridge as AppFactory;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,14 +50,14 @@ require __DIR__ . '/../vendor/autoload.php';
 */
 $containerBuilder = new ContainerBuilder();
 
-$environmentVars = require __DIR__ .'/../app/env.php';
-$environmentVars($containerBuilder);
+$config = require __DIR__ .'/../app/config.php';
+$config($containerBuilder);
 
-$dependencies = require __DIR__ . '/../app/dependencies.php';
-$dependencies($containerBuilder);
+//$dependencies = require __DIR__ . '/../app/dependencies.php';
+//$dependencies($containerBuilder);
 
-$database = require __DIR__ . '/../app/database.php';
-$database($containerBuilder);
+//$database = require __DIR__ . '/../app/database.php';
+//$database($containerBuilder);
 
 $container = $containerBuilder->build();
 
@@ -71,6 +73,13 @@ $container = $containerBuilder->build();
 */
 $app = AppFactory::create($container);
 $callableResolver = $app->getCallableResolver();
+
+$twig = Twig::create(__DIR__ . '/../resources/views', ['cache' => false]);
+
+$app->add(TwigMiddleware::create($app, $twig));
+
+$routes = require __DIR__ . '/../app/routes.php';
+$routes($app);
 
 /*
 |--------------------------------------------------------------------------
