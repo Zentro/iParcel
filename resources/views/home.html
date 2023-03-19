@@ -1,5 +1,12 @@
+{% extends "base.html" %}
+{% block title %}test{% endblock %}
 
-
-{% block body %}
-Hello, world!
+{% block content %}
+{{ include('components/navbar.html', sandboxed = true) }}
+<div class="px-4 py-5 my-5">
+    <div class="container">
+        <h2 class="display-4 fw-bold">Ship, manage, track, deliver</h2>
+        <p class="fs-4">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
+    </div>
+</div>
 {% endblock %}

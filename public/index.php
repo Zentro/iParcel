@@ -26,6 +26,9 @@ use DI\ContainerBuilder;
 use Slim\Views\TwigMiddleware;
 use DI\Bridge\Slim\Bridge as AppFactory;
 
+//ob_start();
+//session_start();
+
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader
@@ -53,11 +56,11 @@ $containerBuilder = new ContainerBuilder();
 $config = require __DIR__ .'/../app/config.php';
 $config($containerBuilder);
 
+$database = require __DIR__ . '/../app/database.php';
+$database($containerBuilder);
+
 //$dependencies = require __DIR__ . '/../app/dependencies.php';
 //$dependencies($containerBuilder);
-
-//$database = require __DIR__ . '/../app/database.php';
-//$database($containerBuilder);
 
 $container = $containerBuilder->build();
 

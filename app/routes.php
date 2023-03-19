@@ -5,16 +5,25 @@ declare(strict_types=1);
 use Slim\App;
 use App\Http\Controllers\HomeController;
 use Psr\Http\Message\ResponseInterface as Response;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Auth\PasswordResetController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\User\DashboardController;
 
 return function (App $app) {
-    $app->get('/', HomeController::class . ':actionIndex');
+    $app->get('/', HomeController::class . ':create');
 
-    // /login
-    // /register
-    // /forgot-password
-    // /reset-password
-    // /verify-email/{id}/{hash}
-    // /logout
+    $app->get('/login', AuthenticatedSessionController::class . ':create');
+    $app->post('/login', AuthenticatedSessionController::class . ':store');
+    $app->post('/logout', AuthenticatedSessionController::class . ':destroy');
+    $app->get('/register', RegisteredUserController::class . ':create');
+    $app->post('/register', RegisteredUserController::class . ':store');
+    $app->get('/reset-password', PasswordResetController::class . ':create');
+    $app->post('/reset-password', PasswordResetController::class . ':store');
+    $app->post('/verify-email/{id}/{hash}', VerifyEmailController::class . ':store');
+
+    $app->get('/dashboard', DashboardController::class . ':create');
 };

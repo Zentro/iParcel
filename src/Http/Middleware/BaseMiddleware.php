@@ -6,7 +6,5 @@ namespace App\Http\Middleware;
 
 class BaseMiddleware
 {
-    public $container;
-
-    public $router;
+    
 }

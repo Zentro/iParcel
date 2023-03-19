@@ -1,0 +1,21 @@
+body {
+    font-family: 'Noto Sans', sans-serif!important;
+}
+
+.bg-primary {
+    background: #0B83E5!important; 
+}
+
+.btn-primary {
+    background: #0B83E5!important; 
+}
+
+.nav-link {
+    color: #000;
+}
+
+.nav-link:hover,
+.nav-link:active,
+.nav-link:focus {
+    color: #0B83E5;
+}
