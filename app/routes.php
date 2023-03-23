@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Slim\App;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TrackingController;
 use Psr\Http\Message\ResponseInterface as Response;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -26,4 +27,6 @@ return function (App $app) {
     $app->post('/verify-email/{id}/{hash}', VerifyEmailController::class . ':store');
 
     $app->get('/dashboard', DashboardController::class . ':create');
+
+    $app->get('/tracking', TrackingController::class . ':create');
 };
