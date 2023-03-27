@@ -29,4 +29,8 @@ return function (App $app) {
     $app->get('/dashboard', DashboardController::class . ':create');
 
     $app->get('/tracking', TrackingController::class . ':create');
+
+    $app->get('/support', SupportController::class . ':create');
+
+    $app->get('/about', AboutController::class . ':create');
 };
