@@ -12,6 +12,6 @@ class SupportController extends BaseController
     public function create(Request $request, Response $response): Response
     {
         $view = $this->view($request);
-        return $view->render($response, 'contact-us.html');
+        return $view->render($response, 'ContactUs.html');
     }
 }
