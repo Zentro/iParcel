@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Slim\App;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\SupportController;
 use Psr\Http\Message\ResponseInterface as Response;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\PasswordResetController;

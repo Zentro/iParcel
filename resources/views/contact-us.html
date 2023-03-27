@@ -1,35 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Contact Us</title>
-</head>
-<body>
-  <nav>
-    <ul>
-      <li><a href="#">Shipping</a></li>
-      <li><a href="#">Tracking</a></li>
-      <li><a href="#">Locations</a></li>
-      <li><a href="#">My Account</a></li>
-      <li><a href="#">Sign In</a></li>
-      <li><a href="#">Sign Up</a></li>
-      <li><a href="#">Settings</a></li>
-      <li><a href="#">Sign Out</a></li>
-    </ul>
-  </nav>
-  <h1>Contact Us</h1>
-  <form action="#" method="post">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required><br><br>
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br><br>
-    <label for="phone">Phone:</label>
-    <input type="tel" id="phone" name="phone" required><br><br>
-    <label for="subject">Subject:</label>
-    <input type="text" id="subject" name="subject" required><br><br>
-    <label for="message">Message:</label><br>
-    <textarea id="message" name="message" rows="5" cols="30" required></textarea><br><br>
-    <input type="submit" value="Submit">
-  </form>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}test{% endblock %}
+
+{% block content %}
+{{ include('components/navbar.html', sandboxed = true) }}
+<div class="vh-100 d-flex align-items-center">
+  <div class="container">
+      <div class="row justify-content-center">
+          <div class="col-sm-4">
+            <div class="card shadow">
+              <div class="card-body w-100">
+                <h5 class="card-title text-center fw-bold text-primary">Contact Us</h5>
+                  <form class="card-body" action="#" method="post">
+                  <div class="mb=3">
+                  </div>
+                  <label for="name">Name</label>
+                  <input class="form-control mb-3" type="text" id="name" name="name" required>
+                  <label for="email">Email</label>
+                  <input class="form-control mb-3" type="email" id="email" name="email" required>
+                  <label for="phone">Phone</label>
+                  <input class="form-control mb-3" type="tel" id="phone" name="phone" required>
+                  <label for="subject">Subject</label>
+                  <input class="form-control  mb-3" type="text" id="subject" name="subject" required>
+                  <label for="message">Message</label><br>
+                  <textarea class="form-control mb-3" id="message" name="message" required></textarea>
+                  <input class="form-control bg-primary text-white" type="submit" value="Submit">
+                  </form>
+              </div>
+            </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

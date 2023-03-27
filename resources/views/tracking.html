@@ -2,19 +2,19 @@
 {% block title %}tracking{% endblock %}
 
 {% block content %}
-<a href="/"><img src="img/logo.svg" alt="iParcel" width="150"></a>
-<section class="vh-100" style="background-color: #eee;">
+{{ include('components/navbar.html', sandboxed = true) }}
+<section class="vh-100">
     <div class="container py-5 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col">
-          <div class="card card-stepper" style="border-radius: 10px;">
+          <div class="card card-stepper shadow" style="border-radius: 10px;">
             <div class="card-body p-4">
   
                 <div class="d-flex justify-content-center align-items-center">
                     <form action="#">
                         <label for="tracknum">Enter Tracking Number : </label>
                         <input type="text" id="tracknum" name="tracknum" required>
-                        <button class="btn btn-outline-primary" type="button">Track order details</button>
+                        <button class="btn bg-primary text-white" type="button">Track order details</button>
                     </form>
                 </div>
               
