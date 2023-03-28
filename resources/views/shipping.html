@@ -3,7 +3,8 @@
 
 {% block content %}
 {{ include('components/navbar.html', sandboxed = true) }}
-<div class="container text-center mt-4 fw-bold text-primary">
+<body background="img/OfficeVans.png" style="background-repeat: no-repeat; background-size: cover; background-position-y: 0px;"></body>
+<div class="container text-center mt-4 fw-bold" style="color: white;">
     <h1>Post Office Shipping</h1>
 </div>
 <form>
@@ -14,7 +15,7 @@
           <div class="card-body">
             <div class="form-group">
                 <fieldset>
-                    <legend>Sender Information</legend>
+                    <legend class="text-primary">Sender Information</legend>
                     <div>
                         <label for="sender-name">Name</label>
                         <input class="form-control mb-3" type="text" id="sender-name" name="sender-name">
@@ -37,7 +38,7 @@
           <div class="card-body">
             <div class="form-group">
                 <fieldset>
-                    <legend>Recipient Information</legend>
+                    <legend class="text-primary">Recipient Information</legend>
                     <div>
                         <label for="recipient-name">Name</label>
                         <input class="form-control mb-3" type="text" id="recipient-name" name="recipient-name">
@@ -61,7 +62,7 @@
         <div class="col-md-12">
             <div class="card shadow">
             <div class="card-body">
-                <legend>Shipment Details</legend>
+                <legend class="text-primary">Shipment Details</legend>
                 <div class="container">
                     <div class="row">
                       <div class="col-sm-6">
