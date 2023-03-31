@@ -5,6 +5,9 @@ declare(strict_types=1);
 use Slim\App;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ShippingController;
+use App\Http\Controllers\SupportController;
 use Psr\Http\Message\ResponseInterface as Response;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\PasswordResetController;
@@ -29,8 +32,7 @@ return function (App $app) {
     $app->get('/dashboard', DashboardController::class . ':create');
 
     $app->get('/tracking', TrackingController::class . ':create');
-
     $app->get('/support', SupportController::class . ':create');
-
     $app->get('/about', AboutController::class . ':create');
+    $app->get('/shipping', ShippingController::class . ':create');
 };
