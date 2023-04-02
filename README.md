@@ -1,3 +1,5 @@
+![logo](public/img/readmebanner.png)
+
 ## Introduction
 
 This is an open source CMS for post/parcel services made using the Slim Framework as part of Dr. Uma Ramamurthy's Database Systems class at the University of Houston.
