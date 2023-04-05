@@ -13,7 +13,7 @@ use App\Services\TrackingService;
 class TrackingController extends BaseController
 {
     protected TrackingService $trackingService;
-    /*  WHY THIS NO WORK
+    /* WHY THIS NO WORK
     public function __construct(ContainerInterface $container, TrackingService $trackingService)
     {
         parent::__construct($container);
@@ -31,7 +31,7 @@ class TrackingController extends BaseController
     {
         $trackingnum = $request->getAttribute('trackingnum');
 
-        $result = $this->trackingService->findParcelStatis($trackingnum); // call the method on $this
+        $result = $this->trackingService->findParcelStatus($trackingnum); // call the method on $this
         // if the query returned a result, display the tracking information
         if ($result !== false) {
             echo '<table>';
