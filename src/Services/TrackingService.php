@@ -7,29 +7,31 @@ namespace App\Services;
 use Exception;
 use App\Models\User;
 use App\Http\Exceptions\UserNotFoundException;
-use src\Repositories\TrackingRepository;
+use App\Repositories\TrackingRepository;
 
 class TrackingService 
 {
     /** @var App\Repositories\TrackingRepository $repository */
-    private $TrackingRepository;  
+    private $TrackingRepository; 
+   
+    public function __construct(UserRepository $TrackingRepository)
+    {
+        $this->TrackingRepository = $TrackingRepository;
+    }
     
-    public function __construct(ContainerInterface $container, TrackingService $trackingService)
-    {
-        $this->trackingService= $trackingService;
-    }
-
-    public function validateRequestInput(array $data): array
-    {
+    public function findParcelStatus($userId)
+    {   
         $errors = [];
-        if ($data['password'] != $data['repeat_password']) {
-            array_push($errors, "Passwords do not match.");
+        $parcelFound = $this->TrackingRepository->findParcelById($userId);
+        if (!$parcelFound) 
+        {
+            array_push($errors, "The requested user could not be found.");
+            return $errors;
         }
-
-        if (strlen($data['password']) < 8) {
-            array_push($errors, "Password length must be at least 8 characters.");
+        else{
+            return $parcelFound;
         }
-        return $errors;
     }
+
 }
 ?>

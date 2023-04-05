@@ -9,18 +9,17 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Services\TrackingService;
-use src\Repositories\TrackingRepository;
-
 
 class TrackingController extends BaseController
 {
     protected TrackingService $trackingService;
-
-    /*public function __construct(ContainerInterface $container, TrackingService $trackingService)
+    /*  WHY THIS NO WORK
+    public function __construct(ContainerInterface $container, TrackingService $trackingService)
     {
         parent::__construct($container);
         $this->trackingService= $trackingService;
-    }*/
+    }
+    */
 
     public function create(Request $request, Response $response): Response
     {
@@ -32,7 +31,7 @@ class TrackingController extends BaseController
     {
         $trackingnum = $request->getAttribute('trackingnum');
 
-        $result = findParcelById($trackingnum); // call the method on $this
+        $result = $this->trackingService->findParcelStatis($trackingnum); // call the method on $this
         // if the query returned a result, display the tracking information
         if ($result !== false) {
             echo '<table>';

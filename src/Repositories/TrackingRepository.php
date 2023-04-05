@@ -27,7 +27,7 @@ class TrackingRepository
         $stmt = $this->conn->prepare("SELECT * FROM parcels WHERE parcel_id=:userId");
         $stmt->bindParam(':userId', $userId);
         $stmt->execute();
-        $result = $stmt->fetchAll;
+        $result = $stmt->fetchAll();
         // fetch data and bind to user model
         return $result[0];
     }
