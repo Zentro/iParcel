@@ -1,4 +1,4 @@
-![logo](public/img/readmebanner.png)
+![logo](img/readmebanner.png)
 
 ## Introduction
 
