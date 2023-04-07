@@ -19,6 +19,45 @@
 CREATE DATABASE IF NOT EXISTS `iparcel_dev` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `iparcel_dev`;
 
+-- Dumping structure for table iparcel_dev.employees
+CREATE TABLE IF NOT EXISTS `employees` (
+  `employee_ssn` int NOT NULL,
+  `user_id` varchar(225) NOT NULL DEFAULT '',
+  `employee_dep_id` varchar(225) DEFAULT NULL,
+  PRIMARY KEY (`employee_ssn`),
+  KEY `user_id` (`user_id`),
+  KEY `employee_dep_id` (`employee_dep_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table iparcel_dev.employees: ~1 rows (approximately)
+INSERT INTO `employees` (`employee_ssn`, `user_id`, `employee_dep_id`) VALUES
+	(1234567890, '3f46422d-55cd-4743-9379-f80cca2b981a', '3');
+
+-- Dumping structure for table iparcel_dev.employee_departments
+CREATE TABLE IF NOT EXISTS `employee_departments` (
+  `employee_dep_id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `description` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`employee_dep_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table iparcel_dev.employee_departments: ~3 rows (approximately)
+INSERT INTO `employee_departments` (`employee_dep_id`, `name`, `description`) VALUES
+	(1, 'Fulfillment', 'Manage parcels'),
+	(2, 'Accounting', 'Manage company finances and billing'),
+	(3, 'HR', 'Manage employees');
+
+-- Dumping structure for table iparcel_dev.employee_dep_managers
+CREATE TABLE IF NOT EXISTS `employee_dep_managers` (
+  `user_id` int NOT NULL AUTO_INCREMENT,
+  `user_group_id` int DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Dumping data for table iparcel_dev.employee_dep_managers: ~1 rows (approximately)
+INSERT INTO `employee_dep_managers` (`user_id`, `user_group_id`) VALUES
+	(2, 2);
+
 -- Dumping structure for table iparcel_dev.parcels
 CREATE TABLE IF NOT EXISTS `parcels` (
   `parcel_id` varchar(225) NOT NULL DEFAULT '',
@@ -71,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `parcel_recipient` (
   PRIMARY KEY (`parcel_recipient_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table iparcel_dev.parcel_recipient: ~0 rows (approximately)
+-- Dumping data for table iparcel_dev.parcel_recipient: ~1 rows (approximately)
 INSERT INTO `parcel_recipient` (`parcel_recipient_id`, `name`, `address`, `city`, `state`, `zip`, `country`, `company`) VALUES
 	('7b0064df-563c-4ee2-8fea-9e936ab7d8f3', 'random', 'random', 'random', 'Texas', 2313123, 'United States', 'random');
 
@@ -88,7 +127,7 @@ CREATE TABLE IF NOT EXISTS `parcel_sender` (
   PRIMARY KEY (`parcel_sender_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table iparcel_dev.parcel_sender: ~0 rows (approximately)
+-- Dumping data for table iparcel_dev.parcel_sender: ~3 rows (approximately)
 INSERT INTO `parcel_sender` (`parcel_sender_id`, `name`, `address`, `city`, `state`, `zip`, `country`, `company`) VALUES
 	('5b324bba-b500-495c-b217-624142bdb329', 'random', 'random', 'random', 'California', 2313, 'United States', 'random'),
 	('75079d05-6fd2-4c20-804b-e467406c5fd1', 'random', 'random', 'random', 'California', 2313, 'United States', 'random'),
@@ -121,33 +160,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table iparcel_dev.users: ~1 rows (approximately)
+-- Dumping data for table iparcel_dev.users: ~2 rows (approximately)
 INSERT INTO `users` (`user_id`, `name`, `password`, `email`, `phone`, `user_group_role_id`, `user_group_id`, `created_at`, `deleted_at`, `email_confirmed`) VALUES
-	('185739fe-e4a0-4147-a3fd-6ab0a80e34b4', 'Demo Demo2', '$2y$10$Ojg1NlwI4XVIwIXQOnwabO0pNvNmhTIe6rx9FzsnbaZE1x0Gx6PQa', 'demo@demo.com', '28182731762', 0, 0, '2023-04-06 01:37:30', NULL, 0);
-
--- Dumping structure for table iparcel_dev.user_groups
-CREATE TABLE IF NOT EXISTS `user_groups` (
-  `user_group_id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `description` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`user_group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Dumping data for table iparcel_dev.user_groups: ~2 rows (approximately)
-INSERT INTO `user_groups` (`user_group_id`, `name`, `description`) VALUES
-	(1, 'Guests', 'The default user group.'),
-	(2, 'Employees', 'The user group for employees.');
-
--- Dumping structure for table iparcel_dev.user_group_owners
-CREATE TABLE IF NOT EXISTS `user_group_owners` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
-  `user_group_id` int DEFAULT NULL,
-  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Dumping data for table iparcel_dev.user_group_owners: ~0 rows (approximately)
-INSERT INTO `user_group_owners` (`user_id`, `user_group_id`) VALUES
-	(2, 2);
+	('185739fe-e4a0-4147-a3fd-6ab0a80e34b4', 'Demo Demo2', '$2y$10$Ojg1NlwI4XVIwIXQOnwabO0pNvNmhTIe6rx9FzsnbaZE1x0Gx6PQa', 'demo@demo.com', '28182731762', 0, 0, '2023-04-06 01:37:30', NULL, 0),
+	('3f46422d-55cd-4743-9379-f80cca2b981a', 'Jane Smith', '$2y$10$WRjCbBrhKQ56dc01ImjoyeSAWP9d3zDElee8kjAB2U4/zFSqSYIgC', 'jane.smith@iparcel.com', '2812129182', 0, 0, '2023-04-07 02:12:23', NULL, 1);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

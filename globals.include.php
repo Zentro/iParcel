@@ -46,3 +46,13 @@ function getDeliveryStatus($code) {
         case 3: return "Delivered";
     }
 }
+
+function getip() {
+    $ip = $_SERVER["REMOTE_ADDR"];
+    if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
+    {
+        $ip=$_SERVER["HTTP_X_FORWARDED_FOR"];
+    }
+
+    return $ip;
+}
