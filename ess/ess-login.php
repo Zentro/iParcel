@@ -10,8 +10,25 @@ if (isset($_SESSION["employee"])) {
     header("Location: index.php");
 }
 
-$errors = ["That SSN doesn't exist for this account. Enter a different SSN or try a different password."];
-
+$errors = [];
+if (isset($_POST["submit"])) {
+    $ssn = $_POST["ssn"];
+    $password = $_POST["password"];
+    $stmt = $dbConn->prepare("SELECT users.*, employees.employee_ssn FROM users, employees WHERE users.user_id = employees.user_id AND employees.employee_ssn = :ssn");
+    $stmt->bindParam(":ssn", $ssn);
+    $stmt->execute();
+    if ($stmt->rowCount() > 0) {
+        $user = $stmt->fetch();
+        if (!password_verify($password, $user["password"])) {
+            array_push($errors, "That password doesn't work for this account. Enter a different account or try a different password.");
+        } else {
+            header("Location: index.php");
+            $_SESSION["employee"] = $user["user_id"];
+        }
+    } else {
+        array_push($errors, "That SSN doesn't exist for this account. Enter a different SSN or try a different password.");
+    }
+}
 ?>
 <!DOCTYPE html>
 <html data-bs-theme="dark">
@@ -39,8 +56,8 @@ $errors = ["That SSN doesn't exist for this account. Enter a different SSN or tr
                     <div class="card">
                         <div class="card-body">
                             <div class="alert alert-info" role="alert">
-                            <i class="bi bi-shield-lock-fill"></i>
-                            Please be advised that for security purposes, your IP address (<?= getip(); ?>) is being logged. We assure you that this information will remain confidential and will only be used to prevent unauthorized access to our systems.
+                                <i class="bi bi-shield-lock-fill"></i>
+                                Please be advised that for security purposes, your IP address (<?= getip(); ?>) is being logged. We assure you that this information will remain confidential and will only be used to prevent unauthorized access to our systems.
                             </div>
                             <?php foreach ($errors as $error) : ?>
                                 <div class="alert alert-danger" role="alert">
@@ -48,7 +65,7 @@ $errors = ["That SSN doesn't exist for this account. Enter a different SSN or tr
                                     <?= $error; ?>
                                 </div>
                             <?php endforeach; ?>
-                            <form action="login.php" method="post">
+                            <form action="ess-login.php" method="post">
                                 <div class="mb-3">
                                     <label for="ssn">SSN</label>
                                     <input type="text" class="form-control" name="ssn">
@@ -60,6 +77,9 @@ $errors = ["That SSN doesn't exist for this account. Enter a different SSN or tr
                                 <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
                                     <label class="form-check-label" for="exampleCheck1">Remember me</label>
+                                </div>
+                                <div class="mb-3">
+                                    <a href="../index.php"><i class="bi bi-arrow-left"></i> Go back to main site</a>
                                 </div>
                                 <button type="submit" name="submit" class="mb-3 w-100 btn btn-lg btn-primary">Login</button>
                             </form>

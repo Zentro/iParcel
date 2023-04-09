@@ -30,6 +30,14 @@ $stmt->execute();
 if ($stmt->rowCount() > 0) {
     $parcels = $stmt->fetchAll();
 }
+
+$transactions = [];
+$stmt = $dbConn->prepare("SELECT * FROM transactions WHERE user_id = :user_id");
+$stmt->bindParam(":user_id", $user_id);
+$stmt->execute();
+if ($stmt->rowCount() > 0) {
+    $transactions = $stmt->fetchAll();
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -75,7 +83,7 @@ if ($stmt->rowCount() > 0) {
                     <?php endif; ?>
                     <?php foreach ($parcels as $parcel) : ?>
                         <tr>
-                            <th><a href="viewtracking.php?code=<?= $parcel["code"]; ?>"><?= $parcel["code"]; ?></a></th>
+                            <th><a href="viewtracking.php?tracknum=<?= $parcel["code"]; ?>"><?= $parcel["code"]; ?></a></th>
                             <th><?= getDeliveryStatus($parcel["status"]); ?></th>
                             <th><?= $parcel["name"]; ?></th>
                             <th><?= $parcel["company"]; ?></th>
@@ -85,9 +93,41 @@ if ($stmt->rowCount() > 0) {
                 </tbody>
 
             </table>
+
+            <h4>My transaction history</h4>
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Transaction ID</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Paid on</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($transactions)) : ?>
+                        <tr class="text-center">
+                            <td colspan="5">
+                                <h4 class="py-4 my-4">You have no transaction history with us</h4>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <?php foreach ($transactions as $transaction) : ?>
+                        <tr>
+                            <th><?= $transaction["transaction_id"]; ?></th>
+                            <th><span class="badge rounded-pill text-bg-success"><?= getPaidStatus($transaction["status"]); ?></span></th>
+                            <th>$ <?= $transaction["total"]; ?></th>
+                            <th><?= $transaction["paid_on"]; ?></th>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+
+            </table>
+            * If you have a transaction dispute, please contact us.
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <?php include 'footer.include.php'; ?>
 </body>
 
 </html>

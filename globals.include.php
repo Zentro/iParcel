@@ -47,6 +47,15 @@ function getDeliveryStatus($code) {
     }
 }
 
+function getPaidStatus($status) {
+    switch($status) {
+        case 0: return "Not Paid";
+        case 1: return "Paid";
+        case 2: return "Pending";
+        case 3: return "Cancelled";
+    }    
+}
+
 function getip() {
     $ip = $_SERVER["REMOTE_ADDR"];
     if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))

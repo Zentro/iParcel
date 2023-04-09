@@ -4,6 +4,10 @@ define('IN_APP', 1);
 ob_start();
 session_start();
 
+if (!isset($_SESSION["employee"])) {
+    header("Location: ess-login.php");
+}
+
 require_once '../globals.include.php';
 
 ?>
@@ -62,7 +66,7 @@ require_once '../globals.include.php';
                         <strong>John Smith</strong>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark text-small">
-                        <li><a class="dropdown-item" href="#">Logout</a></li>
+                        <li><a class="dropdown-item" href="ess-logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>

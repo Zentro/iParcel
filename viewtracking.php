@@ -6,13 +6,13 @@ session_start();
 
 require_once 'globals.include.php';
 
-if(empty($_POST["tracknum"])) {
+if(empty($_GET["tracknum"])) {
     header("Location: tracking.php");
 }
 
-$tracknum = $_POST["tracknum"];
+$tracknum = $_GET["tracknum"];
 
-$stmt = $dbConn->prepare("SELECT * FROM parcels WHERE parcel_id = ?");
+$stmt = $dbConn->prepare("SELECT * FROM parcels WHERE code = ?");
 $stmt->execute([$tracknum]);
 if ($stmt->rowCount() > 0) {
     $parcel = $stmt->fetch();
@@ -84,6 +84,6 @@ if ($stmt->rowCount() > 0) {
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <?php include 'footer.include.php'; ?>
 </body>
 </html>

@@ -60,7 +60,7 @@ if (isset($_GET["success"])) {
                     <div class="py-4 text-center">
                         <a href="/"><img src="img/logo.svg" alt="iParcel" width="200"></a>
                     </div>
-                    <div class="card shadow">
+                    <div class="card">
                         <div class="card-body">
                             <?php if (!empty($success)) : ?>
                                 <div class="alert alert-success" role="alert">
