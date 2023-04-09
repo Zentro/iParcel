@@ -22,18 +22,18 @@ require_once 'globals.include.php';
     <link href="css/style.css" rel="stylesheet">
 </head>
 
-<body>
+<body background="img\shipping-stock-photo.jpg" style="background-repeat: no-repeat; background-size: cover; background-position-y: 0px;">
     <?php include 'navbar.include.php'; ?>
     <div class="px-4 py-5 my-5">
         <div class="container">
             <?php include 'confirm-email.include.php'; ?>
-            <h2 class="display-4 fw-bold text-center">Ship, Manage, Track, Deliver</h2>
-            <p class="fs-4 text-center">All in one place. You'll be able to find shipping quotes and track your packages with our user-friendly
+            <h2 class="display-4 fw-bold text-center" style="color:white;">Ship, Manage, Track, Deliver</h2>
+            <p class="fs-4 text-center" style="color:white;">All in one place. You'll be able to find shipping quotes and track your packages with our user-friendly
                 platform all from the comfort of your home. Our online post office portal strives to process your important
                 packages all while making your mailing experience hassle-free!
             </p>
         </div>
-        <div class="fs-4 text-center text-primary fw-bold mt-5">
+        <div class="fs-4 text-center fw-bold mt-5" style="color:white;">
             3 Easy Steps To Printing Your Shipping Label
         </div>
         <div class="container mt-5">

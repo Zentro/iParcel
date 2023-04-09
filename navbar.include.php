@@ -1,5 +1,5 @@
 <?php defined('IN_APP') or exit('This file cannot be accessed directly.'); ?>
-<nav class="navbar navbar-expand-lg shadow">
+<nav class="navbar navbar-expand-lg shadow bg-white">
     <div class="container">
         <a class="navbar-brand" href="/">
             <img src="img/logo.svg" alt="iParcel" width="150">
@@ -16,10 +16,10 @@
                     <a class="nav-link" aria-current="page" href="tracking.php">Tracking</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="#">About Us</a>
+                    <a class="nav-link" aria-current="page" href="about-us.php">About Us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="#">Support</a>
+                    <a class="nav-link" aria-current="page" href="support.php">Support</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
