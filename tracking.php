@@ -33,10 +33,10 @@ require_once 'globals.include.php';
             <div class="card-body p-4">
   
                 <div class="d-flex justify-content-center align-items-center">
-                    <form action="#">
+                    <form action="viewtracking.php" method="POST">
                         <label for="tracknum">Enter Tracking Number : </label>
                         <input type="text" id="tracknum" name="tracknum" required>
-                        <button class="btn bg-primary text-white" type="button">Track order details</button>
+                        <button class="btn bg-primary text-white" type="submit">Track order details</button>
                     </form>
                 </div>
               
@@ -46,6 +46,7 @@ require_once 'globals.include.php';
                     <div class="d-flex flex-row justify-content-between align-items-center align-content-center" id="puttrackhere">
                     <tr>
                         <td>Tracking Number : </td>
+                        <td></td>
                     </tr>
                     <tr>
 

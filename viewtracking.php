@@ -6,22 +6,20 @@ session_start();
 
 require_once 'globals.include.php';
 
-if(empty($_GET["code"])) {
+if(empty($_POST["tracknum"])) {
     header("Location: tracking.php");
 }
 
-$code = $_GET["code"];
+$tracknum = $_POST["tracknum"];
 
-$stmt = $dbConn->prepare("SELECT * FROM parcels AS p
-INNER JOIN parcel_recipient AS pr ON p.parcel_recipient_id = pr.parcel_recipient_id
-INNER JOIN parcel_sender AS ps ON p.parcel_sender_id = ps.parcel_sender_id
-WHERE p.code = :code");
-$stmt->bindParam(":code", $code);
-$stmt->execute();
+$stmt = $dbConn->prepare("SELECT * FROM parcels WHERE parcel_id = ?");
+$stmt->execute([$tracknum]);
 if ($stmt->rowCount() > 0) {
     $parcel = $stmt->fetch();
+    $parcel = $parcel['status'];
+    $parcel = getDeliveryStatus($parcel);
 } else {
-    $error = "That parcel could not be found in the system.";
+    $parcel = "That parcel could not be found in the system.";
 }
 
 ?>
@@ -42,11 +40,50 @@ if ($stmt->rowCount() > 0) {
 
 <body>
     <?php include 'navbar.include.php'; ?>
-    <div class="px-4 py-5 my-5">
-        <div class="container">
-            <?php var_dump($parcel); ?>
+    
+    <body background="img/Houston-Road-Map.png" style="background-repeat: no-repeat; background-size: cover; background-position-y: -550px;">
+    <section class="vh-100">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col">
+          <div class="card card-stepper shadow" style="border-radius: 10px;">
+            <div class="card-body p-4">
+  
+                <div class="d-flex justify-content-center align-items-center">
+                    <form action="#" method="POST">
+                        <label for="tracknum">Enter Tracking Number : </label>
+                        <input type="text" id="tracknum" name="tracknum" required>
+                        <button class="btn bg-primary text-white" type="submit">Track order details</button>
+                    </form>
+                </div>
+              
+                <hr class="my-4">
+                <table>
+
+                    <div class="d-flex flex-row justify-content-between align-items-center align-content-center" id="puttrackhere">
+                    <tr>
+                        <td style="padding: 10px;">Tracking Number : </td>
+                        <td><?php echo $tracknum ?></td>
+                    </tr>
+                    <tr>
+
+                    </tr>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-between align-items-center" id="status">
+                        <tr>
+                            <td style="padding: 10px;" >Status : </td>
+                            <td><?php echo $parcel; ?></td>
+                        </tr>
+                    </div>
+
+                </table>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
 </html>
