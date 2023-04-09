@@ -10,12 +10,12 @@ body {
     background: #0B83E5!important; 
 }
 
-.nav-link {
-    color: #000;
-}
-
 .nav-link:hover,
 .nav-link:active,
 .nav-link:focus {
     color: #0B83E5;
+}
+
+.nav-item .nav-link.active {
+    background: #0B83E5!important; 
 }
