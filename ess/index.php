@@ -1,5 +1,5 @@
 <?php
-define('IN_APP', 1);
+define('APP_RUNNING', 1);
 
 ob_start();
 session_start();
@@ -9,6 +9,33 @@ if (!isset($_SESSION["employee"])) {
 }
 
 require_once '../globals.include.php';
+
+// Get # of customers
+$stmt = $dbConn->prepare("SELECT COUNT(*) FROM users");
+$stmt->execute();
+$customer_count = $stmt->fetchColumn();
+
+// Get total of revenue
+$stmt = $dbConn->prepare("SELECT SUM(total) FROM transactions");
+$stmt->execute();
+$revenue_sum = $stmt->fetchColumn();
+
+// Get purchases
+$stmt = $dbConn->prepare("SELECT COUNT(*) FROM transactions");
+$stmt->execute();
+$purchase_count = $stmt->fetchColumn();
+
+// Get # of packages
+$stmt = $dbConn->prepare("SELECT COUNT(*) FROM parcels");
+$stmt->execute();
+$parcel_count = $stmt->fetchColumn();
+
+// Get the user
+$ssn = $_SESSION["employee"];
+$stmt = $dbConn->prepare("SELECT users.*, employees.* FROM users, employees WHERE users.user_id = employees.user_id AND employees.employee_ssn = :ssn");
+$stmt->bindParam(":ssn", $ssn);
+$stmt->execute();
+$user = $stmt->fetch();
 
 ?>
 <!DOCTYPE html>
@@ -36,25 +63,31 @@ require_once '../globals.include.php';
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
-                        <a href="#" class="nav-link active" aria-current="page">
+                        <a href="index.php" class="nav-link active" aria-current="page">
                             <i class="bi bi-house"></i>
                             Dashboard
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link text-white">
+                    <li class="nav-item">
+                        <a href="employees.php" class="nav-link text-white">
                             <i class="bi bi-person-badge"></i>
                             Employees
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link text-white">
+                    <li class="nav-item">
+                        <a href="transactions.php" class="nav-link text-white">
                             <i class="bi bi-currency-dollar"></i>
-                            Products & Transactions
+                            Transactions
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link text-white">
+                    <li class="nav-item">
+                        <a href="parcels.php" class="nav-link text-white">
+                            <i class="bi bi-box2"></i>
+                            Parcels
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="customers.php" class="nav-link text-white">
                             <i class="bi bi-person-gear"></i>
                             Customers
                         </a>
@@ -63,21 +96,21 @@ require_once '../globals.include.php';
                 <hr>
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <strong>John Smith</strong>
+                        <strong><?=$user["name"];?></strong>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark text-small">
                         <li><a class="dropdown-item" href="ess-logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>
-            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4">
-                <h1 class="h2">Welcome back, John Smith</h1>
+            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4" style="height: 100vh">
+                <h1 class="h2">Welcome back, <?=$user["name"];?> <small>Employee SSN: <?=$user["employee_ssn"];?></small></h1>
                 <div class="row my-4">
                     <div class="col-12 col-md-6 col-lg-3 mb-4 mb-lg-0">
                         <div class="card">
                             <h5 class="card-header">Customers</h5>
                             <div class="card-body">
-                                <h5 class="card-title">97,893</h5>
+                                <h5 class="card-title"><?=$customer_count;?></h5>
                                 <p class="card-text text-success">18.2% increase since last month</p>
                             </div>
                         </div>
@@ -86,7 +119,7 @@ require_once '../globals.include.php';
                         <div class="card">
                             <h5 class="card-header">Revenue</h5>
                             <div class="card-body">
-                                <h5 class="card-title">$2.5k</h5>
+                                <h5 class="card-title">$<?=$revenue_sum;?></h5>
                                 <p class="card-text text-success">4.6% increase since last month</p>
                             </div>
                         </div>
@@ -95,16 +128,16 @@ require_once '../globals.include.php';
                         <div class="card">
                             <h5 class="card-header">Purchases</h5>
                             <div class="card-body">
-                                <h5 class="card-title">43,284</h5>
+                                <h5 class="card-title"><?=$purchase_count;?></h5>
                                 <p class="card-text text-success">2.5% increase since last month</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-md-6 mb-4 mb-lg-0 col-lg-3">
                         <div class="card">
-                            <h5 class="card-header"># Of Packages</h5>
+                            <h5 class="card-header">Parcels</h5>
                             <div class="card-body">
-                                <h5 class="card-title">20,492</h5>
+                                <h5 class="card-title"><?=$parcel_count;?></h5>
                                 <p class="card-text text-danger">2.6% decrease since last month</p>
                             </div>
                         </div>

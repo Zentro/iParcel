@@ -1,11 +1,11 @@
 <?php
-define('IN_APP', 1);
+define('APP_RUNNING', 1);
 
 ob_start();
 session_start();
 
 if (!isset($_SESSION["user"])) {
-    header("Location: login.php");
+    header("Location: /login");
 }
 
 $_SESSION = array();
@@ -25,7 +25,7 @@ if (ini_get("session.use_cookies")) {
 
 session_destroy();
 // Leave no trace
-header("refresh:3;url=login.php");
+header("refresh:3;url=/login");
 ?>
 <!DOCTYPE html>
 <html>

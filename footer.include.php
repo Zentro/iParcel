@@ -1,4 +1,4 @@
-<?php defined('IN_APP') or exit('This file cannot be accessed directly.'); ?>
+<?php defined('APP_RUNNING') or exit('This file cannot be accessed directly.'); ?>
     <div class="container">
         <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
             <div class="col mb-3">
@@ -32,9 +32,9 @@
             <div class="col mb-3">
                 <h5>Company</h5>
                 <ul class="nav flex-column">
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Support</a></li>
-                    <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">About Us</a></li>
-                    <li class="nav-item mb-2"><a href="ess/" class="nav-link p-0 text-body-secondary">ESS / I work here</a></li>
+                    <li class="nav-item mb-2"><a href="support.php" class="nav-link p-0 text-body-secondary">Support</a></li>
+                    <li class="nav-item mb-2"><a href="about-us.php" class="nav-link p-0 text-body-secondary">About Us</a></li>
+                    <li class="nav-item mb-2"><a href="ess/" class="nav-link p-0 text-body-secondary">ESS</a></li>
                 </ul>
             </div>
         </footer>

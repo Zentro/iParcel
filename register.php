@@ -4,10 +4,7 @@ define('APP_RUNNING', 1);
 ob_start();
 session_start();
 
-require_once './globals.include.php';
-require_once APP_DIR . '/inc/class_loginhandler.php';
-
-$loginHandler = new loginHandler($dbConn);
+require_once 'globals.include.php';
 
 if (isset($_SESSION["user"])) {
     header("Location: /dashboard");
@@ -16,35 +13,43 @@ if (isset($_SESSION["user"])) {
 $errors = [];
 
 if (isset($_POST["submit"])) {
+    $name = $_POST["name"];
     $email = $_POST["email"];
-    $password = $_POST["password"];
-    $stmt = $dbConn->prepare("SELECT user_id,email,password FROM users WHERE email= :email");
+    // emails must be unique, last ditch effort before SQL unique key
+    $stmt = $dbConn->prepare("SELECT email FROM users WHERE email =:email");
     $stmt->bindParam(":email", $email);
     $stmt->execute();
-    if ($stmt->rowCount() > 0) {
-        $user = $stmt->fetch();
-        if (!password_verify($password, $user["password"])) {
-            array_push($errors, "That password doesn't work for this account. Enter a different account or try a different password.");
+    if ($stmt->rowCount() == 0) {
+
+        $password = $_POST["password"];
+        $repeat_password = $_POST["repeat_password"];
+        $phone = $_POST["phone"];
+        if ($password != $repeat_password) {
+            array_push($errors, "Your passwords don't match. They must match.");
         } else {
-            header("Location: /dashboard");
-            $_SESSION["user"] = $user["user_id"];
+            $user_id = guidv4();
+            $password_hash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $dbConn->prepare("INSERT INTO users 
+        (user_id, name, email, password, phone, user_group_id, user_group_role_id, email_confirmed) 
+        VALUES (:user_id,:name,:email,:password,:phone,0,0,0)");
+            $stmt->bindParam(":user_id", $user_id);
+            $stmt->bindParam(":name", $name);
+            $stmt->bindParam(":email", $email);
+            $stmt->bindParam(":password", $password_hash);
+            $stmt->bindParam(":phone", $phone);
+            $stmt->execute();
+            header("Location: /login?success=true");
         }
     } else {
-        array_push($errors, "That account doesn't exist. Enter a different account or try a different password.");
+        array_push($errors, "That account already exists with that email. Please use a different email or login to that account.");
     }
-}
-
-$success = "";
-
-if (isset($_GET["success"])) {
-    $success = "Your account has been created. An email with an activation link has been sent to you.";
 }
 ?>
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Login - iParcel</title>
+    <title>Register - iParcel</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -65,19 +70,17 @@ if (isset($_GET["success"])) {
                     </div>
                     <div class="card">
                         <div class="card-body">
-                            <?php if (!empty($success)) : ?>
-                                <div class="alert alert-success" role="alert">
-                                    <i class="bi bi-exclamation-triangle-fill"></i>
-                                    <?= $success; ?>
-                                </div>
-                            <?php endif; ?>
                             <?php foreach ($errors as $error) : ?>
                                 <div class="alert alert-danger" role="alert">
                                     <i class="bi bi-exclamation-triangle-fill"></i>
                                     <?= $error; ?>
                                 </div>
                             <?php endforeach; ?>
-                            <form action="/login" method="post">
+                            <form action="/register" method="post">
+                                <div class="mb-3">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control" name="name">
+                                </div>
                                 <div class="mb-3">
                                     <label for="email">Email address</label>
                                     <input type="email" class="form-control" name="email">
@@ -86,14 +89,17 @@ if (isset($_GET["success"])) {
                                     <label for="password">Password</label>
                                     <input type="password" class="form-control" name="password">
                                 </div>
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                    <label class="form-check-label" for="exampleCheck1">Remember me</label>
-                                </div>
-                                <button type="submit" name="submit" class="mb-3 w-100 btn btn-lg btn-primary">Login</button>
                                 <div class="mb-3">
-                                    <a href="/reset-password">Reset my password</a>
-                                    <a href="/register">Register</a>
+                                    <label for="repeat_password">Repeat password</label>
+                                    <input type="password" class="form-control" name="repeat_password">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="phone">Phone number</label>
+                                    <input type="text" class="form-control" name="phone">
+                                </div>
+                                <button type="submit" name="submit" class="mb-3 w-100 btn btn-lg btn-primary">Register</button>
+                                <div class="mb-3">
+                                    <a href="/login">Login</a>
                                 </div>
                             </form>
                         </div>

@@ -1,5 +1,5 @@
 <?php
-define('IN_APP', 1);
+define('APP_RUNNING', 1);
 
 ob_start();
 session_start();
@@ -23,7 +23,7 @@ if (isset($_POST["submit"])) {
             array_push($errors, "That password doesn't work for this account. Enter a different account or try a different password.");
         } else {
             header("Location: index.php");
-            $_SESSION["employee"] = $user["user_id"];
+            $_SESSION["employee"] = $ssn;
         }
     } else {
         array_push($errors, "That SSN doesn't exist for this account. Enter a different SSN or try a different password.");
