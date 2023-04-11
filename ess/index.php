@@ -39,7 +39,7 @@ $user = $stmt->fetch();
 
 ?>
 <!DOCTYPE html>
-<html data-bs-theme="dark">
+<html>
 
 <head>
     <title>Employee Self-Service - iParcel</title>
@@ -56,9 +56,9 @@ $user = $stmt->fetch();
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark bg-body-tertiary" style="width: 280px;">
-                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                    <img src="../img/logo-white.svg" alt="Logo" width="150" class="d-inline-block align-text-top">
+            <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+                    <img src="../img/logo.svg" alt="Logo" width="150" class="d-inline-block align-text-top">
                 </a>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
@@ -69,25 +69,25 @@ $user = $stmt->fetch();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="employees.php" class="nav-link text-white">
+                        <a href="employees.php" class="nav-link">
                             <i class="bi bi-person-badge"></i>
                             Employees
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="transactions.php" class="nav-link text-white">
+                        <a href="transactions.php" class="nav-link">
                             <i class="bi bi-currency-dollar"></i>
                             Transactions
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="parcels.php" class="nav-link text-white">
+                        <a href="parcels.php" class="nav-link">
                             <i class="bi bi-box2"></i>
                             Parcels
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="customers.php" class="nav-link text-white">
+                        <a href="customers.php" class="nav-link">
                             <i class="bi bi-person-gear"></i>
                             Customers
                         </a>
@@ -95,10 +95,10 @@ $user = $stmt->fetch();
                 </ul>
                 <hr>
                 <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <strong><?=$user["name"];?></strong>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-small">
+                    <ul class="dropdown-menu text-small">
                         <li><a class="dropdown-item" href="ess-logout.php">Logout</a></li>
                     </ul>
                 </div>

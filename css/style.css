@@ -2,6 +2,10 @@ body {
     font-family: 'Noto Sans', sans-serif!important;
 }
 
+a {
+    color: #0B83E5!important; 
+}
+
 .bg-primary {
     background: #0B83E5!important; 
 }

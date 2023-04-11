@@ -39,7 +39,7 @@ $user = $stmt->fetch();
 
 ?>
 <!DOCTYPE html>
-<html data-bs-theme="dark">
+<html>
 
 <head>
     <title>Employee Self-Service - iParcel</title>

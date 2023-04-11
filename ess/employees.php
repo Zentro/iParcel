@@ -10,26 +10,6 @@ if (!isset($_SESSION["employee"])) {
 
 require_once '../globals.include.php';
 
-// Get # of customers
-$stmt = $dbConn->prepare("SELECT COUNT(*) FROM users");
-$stmt->execute();
-$customer_count = $stmt->fetchColumn();
-
-// Get total of revenue
-$stmt = $dbConn->prepare("SELECT SUM(total) FROM transactions");
-$stmt->execute();
-$revenue_sum = $stmt->fetchColumn();
-
-// Get purchases
-$stmt = $dbConn->prepare("SELECT COUNT(*) FROM transactions");
-$stmt->execute();
-$purchase_count = $stmt->fetchColumn();
-
-// Get # of packages
-$stmt = $dbConn->prepare("SELECT COUNT(*) FROM parcels");
-$stmt->execute();
-$parcel_count = $stmt->fetchColumn();
-
 // Get the user
 $ssn = $_SESSION["employee"];
 $stmt = $dbConn->prepare("SELECT users.*, employees.* FROM users, employees WHERE users.user_id = employees.user_id AND employees.employee_ssn = :ssn");
@@ -37,6 +17,10 @@ $stmt->bindParam(":ssn", $ssn);
 $stmt->execute();
 $user = $stmt->fetch();
 
+// Get employees
+$stmt = $dbConn->prepare("SELECT users.*, employees.* FROM users, employees WHERE users.user_id = employees.user_id ");
+$stmt->execute();
+$employees = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html data-bs-theme="dark">
@@ -104,7 +88,7 @@ $user = $stmt->fetch();
                 </div>
             </div>
             <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4" style="height: 100vh">
-
+            <button class="btn btn-primary" type="submit" name="add">Add</button>
                 <div class="card">
                     <h5 class="card-header">Employees</h5>
                     <div class="card-body">
@@ -113,112 +97,22 @@ $user = $stmt->fetch();
                                 <thead>
                                     <tr>
                                         <th scope="col">Employee ID</th>
-                                        <th scope="col">Last Name</th>
-                                        <th scope="col">First Name</th>
+                                        <th scope="col">Name</th>
                                         <th scope="col">Department</th>
                                         <th scope="col"># of Hours</th>
                                         <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th scope="row">3924722</th>
-                                        <td>Patel</td>
-                                        <td>Ashna</td>
-                                        <td>Sales</td>
-                                        <td>34.3</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2847233</th>
-                                        <td>Galvan</td>
-                                        <td>Rafael</td>
-                                        <td>Support</td>
-                                        <td>40.5</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">0264228</th>
-                                        <td>Jahanara</td>
-                                        <td>Sonny</td>
-                                        <td>Sales</td>
-                                        <td>32.4</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">7296104</th>
-                                        <td>Won</td>
-                                        <td>Brandon</td>
-                                        <td>Sorting</td>
-                                        <td>30.6</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">6452046</th>
-                                        <td>Mullen</td>
-                                        <td>Jason</td>
-                                        <td>Sorting</td>
-                                        <td>26.6</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1746395</th>
-                                        <td>Gomez</td>
-                                        <td>Selena</td>
-                                        <td>Fullfillment</td>
-                                        <td>18.5</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">4629562</th>
-                                        <td>McIngvale</td>
-                                        <td>James</td>
-                                        <td>Sales</td>
-                                        <td>40.3</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">8452946</th>
-                                        <td>Doe</td>
-                                        <td>John</td>
-                                        <td>Manager</td>
-                                        <td>35.7</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1749361</th>
-                                        <td>Rincon</td>
-                                        <td>Carlos</td>
-                                        <td>Sales</td>
-                                        <td>39.4</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">9463295</th>
-                                        <td>Parker</td>
-                                        <td>Peter</td>
-                                        <td>Fulfillment</td>
-                                        <td>14.6</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3194566</th>
-                                        <td>Khator</td>
-                                        <td>Renu</td>
-                                        <td>Sorting</td>
-                                        <td>24.4</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">8452856</th>
-                                        <td>Smith</td>
-                                        <td>Sally</td>
-                                        <td>Sorting</td>
-                                        <td>29.2</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3716590</th>
-                                        <td>Johnson</td>
-                                        <td>John</td>
-                                        <td>Fulfillment</td>
-                                        <td>40.2</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">4729562</th>
-                                        <td>Rogers</td>
-                                        <td>Chris</td>
-                                        <td>Sales</td>
-                                        <td>39.5</td>
-                                    </tr>
+                                    <?php foreach($employees as $employee) : ?>
+                                        <tr>
+                                            <th scope="row"><a href="employees?=edit"><?= $employee["employee_ssn"]; ?></a></th>
+                                            <td><?= $employee["name"]; ?></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><button class="btn btn-danger" type="submit" name="remove">Remove</button></td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
