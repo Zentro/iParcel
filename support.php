@@ -35,15 +35,17 @@ require_once 'globals.include.php';
                                 <form class="card-body" action="#" method="post">
                                     <div class="mb=3">
                                     </div>
-                                    <label for="name">Name</label>
+                                    <label for="name">Name*</label>
                                     <input class="form-control mb-3" type="text" id="name" name="name" required>
-                                    <label for="email">Email</label>
+                                    <label for="email">Email*</label>
                                     <input class="form-control mb-3" type="email" id="email" name="email" required>
-                                    <label for="phone">Phone</label>
+                                    <label for="phone">Phone*</label>
                                     <input class="form-control mb-3" type="tel" id="phone" name="phone" required>
-                                    <label for="subject">Subject</label>
+                                    <label for="tracking number">Tracking number (optional)</label><br>
+                                    <input class="form-control  mb-3" type="tracking number" id="tracking number" name="tracking number" required>
+                                    <label for="subject">Subject*</label>
                                     <input class="form-control  mb-3" type="text" id="subject" name="subject" required>
-                                    <label for="message">Message</label><br>
+                                    <label for="message">Message*</label><br>
                                     <textarea class="form-control mb-3" id="message" name="message" required></textarea>
                                     <input class="form-control bg-primary text-white" type="submit" value="Submit">
                                 </form>
@@ -52,6 +54,48 @@ require_once 'globals.include.php';
                 </div>
             </div>
         </div>
+        <nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+  </ol>
+</nav>
+<h1 class="h2">Frequently Asked Questions</h1>
+<div class="row my-4">
+  <div class="col-12 col-md-6 col-12 mb-4 mb-lg-0">
+    <div class="card">
+        <h5 class="card-header">How can I file a claim for lost or damaged packages?</h5>
+        <div class="card-body">
+          <p class="card-text">In case of lost/damaged packages, we ask you to fill out the form at the top of this page. Briefly explain the situation so that we can find the solution that best suits you. Provide your tracking number for a faster resolution process. </p>
+        </div>
+      </div>
+</div>
+    <div class="col-12 col-md-6 mb-4 mb-lg-0 col-12">
+        <div class="card">
+            <h5 class="card-header">What is the expected delivery time for shipments?</h5>
+            <div class="card-body">
+              <p class="card-text">Delivery times can vary depending on the shipping method selected, distance to destination, and any potential delays in transit. You will be presented with an estimated delivery date before billing, and we will notify you in the case of a delay.</p>
+            </div>
+          </div>
+    </div>
+  </div>
+  <div class="row my-4">
+    <div class="col-12 col-md-6 col-12 mb-4 mb-lg-0">
+      <div class="card">
+          <h5 class="card-header">How are shipping rates calculated?</h5>
+          <div class="card-body">
+            <p class="card-text">Shipping rates depend on factors such as package weight, dimensions, destination, and shipping method. You will be presented with a rate before the billing.</p>
+          </div>
+        </div>
+  </div>
+    <div class="col-12 col-md-6 mb-4 mb-lg-0 col-12">
+        <div class="card">
+            <h5 class="card-header">Are there any restrictions on shipping certain items, such as hazardous materials?</h5>
+            <div class="card-body">
+              <p class="card-text">Items that are either acidic, combustible, corrosive, explosive, flammable, or infectious may be shipped under specific conditions. Hazardous materials may never be shipped by air. </p>
+            </div>
+          </div>
+    </div>
+  </div>  
+
         <?php include 'footer.include.php'; ?>
     </body>
 
