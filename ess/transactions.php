@@ -17,11 +17,19 @@ $stmt->bindParam(":ssn", $ssn);
 $stmt->execute();
 $user = $stmt->fetch();
 
-// Get transactions
-$stmt = $dbConn->prepare("SELECT * FROM transactions");
+// Get employees
+$stmt = $dbConn->prepare("SELECT
+t.transaction_id AS tid,
+t.total,
+t.user_id,
+t.status,
+t.paid_on,
+t.cc_name,
+CASE WHEN t.user_id = '0' THEN 'Guest' ELSE u.name END AS name
+FROM transactions AS t
+LEFT JOIN users AS u ON t.user_id = u.user_id");
 $stmt->execute();
 $transactions = $stmt->fetchAll();
-
 ?>
 <!DOCTYPE html>
 <html data-bs-theme="dark">
@@ -41,8 +49,8 @@ $transactions = $stmt->fetchAll();
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark bg-body-tertiary" style="width: 280px;">
-                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary col-2">
+                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
                     <img src="../img/logo-white.svg" alt="Logo" width="150" class="d-inline-block align-text-top">
                 </a>
                 <hr>
@@ -60,7 +68,7 @@ $transactions = $stmt->fetchAll();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="transactions.php" class="nav-link active" aria-current="page">
+                        <a href="transactions.php" class="nav-link text-white active" aria-current="page">
                             <i class="bi bi-currency-dollar"></i>
                             Transactions
                         </a>
@@ -68,7 +76,7 @@ $transactions = $stmt->fetchAll();
                     <li class="nav-item">
                         <a href="parcels.php" class="nav-link text-white">
                             <i class="bi bi-box2"></i>
-                            Parcels
+                            Logistics
                         </a>
                     </li>
                     <li class="nav-item">
@@ -80,45 +88,38 @@ $transactions = $stmt->fetchAll();
                 </ul>
                 <hr>
                 <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <strong><?= $user["name"]; ?></strong>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-small">
+                    <ul class="dropdown-menu text-small">
                         <li><a class="dropdown-item" href="ess-logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>
-            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4" style="height: 100vh">
-
-            <div class="card">
-                    <h5 class="card-header">Transactions</h5>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Order</th>
-                                        <th scope="col">Product</th>
-                                        <th scope="col">Customer</th>
-                                        <th scope="col">Total</th>
-                                        <th scope="col">Date</th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row"></th>
-                                        <td>Priority</td>
-                                        <td>uramamur@bcm.edu</td>
-                                        <td>$25.23</td>
-                                        <td>April 11 2023</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <a href="#" class="btn btn-block btn-light">View all</a>
-                    </div>
-                </div>
+            <main class="col px-md-4 py-4" style="height: 100vh">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Transaction ID</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Paid on</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Name on card</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach($transactions as $transaction) : ?>
+                            <tr>
+                                <th scope="row"><a href="employees?=edit"><?= $transaction["tid"]; ?></a></th>
+                                <td><?= $transaction["status"]; ?></td>
+                                <td><?= $transaction["paid_on"]; ?></td>
+                                <td><?= $transaction["name"]; ?></td>
+                                <td><?= $transaction["cc_name"]; ?></td>
+                                <td></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
                 <footer class="pt-5 d-flex justify-content-between">
                     <span>Copyright © 2023 iParcel</span>
                 </footer>

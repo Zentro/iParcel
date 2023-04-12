@@ -64,16 +64,18 @@ if (isset($_POST["submit"])) {
     $weight = (float)$_POST["weight"];
     $method = (int)$_POST["method"];
     $code = generateRandomString();
+    $offset_days = rand(3,12);
+    $delivery_at = new \DateTime('now +'.$offset_days.' day');
 
     if (isset($_SESSION["user"])) {
         $user_id = $_SESSION["user"];
         $stmt = $dbConn->prepare("INSERT INTO parcels
-        (parcel_id,status,weight,code,shipping_method,parcel_sender_id,parcel_recipient_id,user_id)
+        (parcel_id,status,weight,code,shipping_method,parcel_sender_id,parcel_recipient_id,user_id,expected_delivery_at)
         VALUES(:parcel_id,0,:weight,:code,:method,:from_id,:to_id,:user_id)");
     } else {
         $stmt = $dbConn->prepare("INSERT INTO parcels
-        (parcel_id,status,weight,code,shipping_method,parcel_sender_id,parcel_recipient_id,user_id)
-        VALUES(:parcel_id,0,:weight,:code,:method,:from_id,:to_id,0)");
+        (parcel_id,status,weight,code,shipping_method,parcel_sender_id,parcel_recipient_id,user_id,expected_delivery_at)
+        VALUES(:parcel_id,0,:weight,:code,:method,:from_id,:to_id,0,:delivery_at)");
     }
     $stmt->bindParam(":parcel_id", $parcel_id);
     $stmt->bindParam(":weight", $weight);
@@ -81,6 +83,7 @@ if (isset($_POST["submit"])) {
     $stmt->bindParam(":method", $method);
     $stmt->bindParam(":from_id", $from_id);
     $stmt->bindParam(":to_id", $to_id);
+    $stmt->bindParam(":delivery_at", $delivery_at);
     if (isset($_SESSION["user"])) {
         $user_id = $_SESSION["user"];
         $stmt->bindParam(":user_id", $user_id);
@@ -128,6 +131,8 @@ if (isset($_POST["submit"])) {
         $stmt->bindParam(":cc_cvv", $cc_cvv);
     }
     $stmt->execute();
+
+    header("Location: /viewtracking.php?tracknum=".$code);
 }
 
 ?>

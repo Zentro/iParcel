@@ -69,7 +69,7 @@ require_once 'globals.include.php';
         </div>
         <div class="container mt-5">
             <div class="d-flex justify-content-center">
-                <a href="newaccount.php">
+                <a href="/register">
                     <button class="btn btn-primary">Register Now!</button>
                 </a>
             </div>

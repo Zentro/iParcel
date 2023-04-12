@@ -38,7 +38,7 @@ $stmt->execute();
 $user = $stmt->fetch();
 
 ?>
-<!DOCTYPE html>
+<html data-bs-theme="dark">
 <html>
 
 <head>
@@ -56,38 +56,38 @@ $user = $stmt->fetch();
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+            <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary col-2">
                 <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
-                    <img src="../img/logo.svg" alt="Logo" width="150" class="d-inline-block align-text-top">
+                    <img src="../img/logo-white.svg" alt="Logo" width="150" class="d-inline-block align-text-top">
                 </a>
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
-                        <a href="index.php" class="nav-link active" aria-current="page">
+                        <a href="index.php" class="nav-link text-white active" aria-current="page">
                             <i class="bi bi-house"></i>
                             Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="employees.php" class="nav-link">
+                        <a href="employees.php" class="nav-link text-white">
                             <i class="bi bi-person-badge"></i>
                             Employees
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="transactions.php" class="nav-link">
+                        <a href="transactions.php" class="nav-link text-white">
                             <i class="bi bi-currency-dollar"></i>
                             Transactions
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="parcels.php" class="nav-link">
+                        <a href="parcels.php" class="nav-link text-white">
                             <i class="bi bi-box2"></i>
-                            Parcels
+                            Logistics
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="customers.php" class="nav-link">
+                        <a href="customers.php" class="nav-link text-white">
                             <i class="bi bi-person-gear"></i>
                             Customers
                         </a>
@@ -103,8 +103,8 @@ $user = $stmt->fetch();
                     </ul>
                 </div>
             </div>
-            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4" style="height: 100vh">
-                <h1 class="h2">Welcome back, <?=$user["name"];?> <small>Employee SSN: <?=$user["employee_ssn"];?></small></h1>
+            <main class="col px-md-4 py-4" style="height: 100vh">
+                <h1 class="h2">Welcome back, <?=$user["name"];?> </h1>
                 <div class="row my-4">
                     <div class="col-12 col-md-6 col-lg-3 mb-4 mb-lg-0">
                         <div class="card">

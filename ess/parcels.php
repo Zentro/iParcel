@@ -10,26 +10,6 @@ if (!isset($_SESSION["employee"])) {
 
 require_once '../globals.include.php';
 
-// Get # of customers
-$stmt = $dbConn->prepare("SELECT COUNT(*) FROM users");
-$stmt->execute();
-$customer_count = $stmt->fetchColumn();
-
-// Get total of revenue
-$stmt = $dbConn->prepare("SELECT SUM(total) FROM transactions");
-$stmt->execute();
-$revenue_sum = $stmt->fetchColumn();
-
-// Get purchases
-$stmt = $dbConn->prepare("SELECT COUNT(*) FROM transactions");
-$stmt->execute();
-$purchase_count = $stmt->fetchColumn();
-
-// Get # of packages
-$stmt = $dbConn->prepare("SELECT COUNT(*) FROM parcels");
-$stmt->execute();
-$parcel_count = $stmt->fetchColumn();
-
 // Get the user
 $ssn = $_SESSION["employee"];
 $stmt = $dbConn->prepare("SELECT users.*, employees.* FROM users, employees WHERE users.user_id = employees.user_id AND employees.employee_ssn = :ssn");
@@ -37,9 +17,23 @@ $stmt->bindParam(":ssn", $ssn);
 $stmt->execute();
 $user = $stmt->fetch();
 
+// Get packages, and if they have a user associated with them find them
+$stmt = $dbConn->prepare("SELECT 
+p.parcel_id, p.status, p.user_id, 
+pr.name as recipient_name, 
+pr.city as recipient_city, 
+pr.state as recipient_state, 
+ps.name as sender_name, 
+ps.city as sender_city, 
+ps.state as sender_state
+FROM parcels AS p
+JOIN parcel_recipient AS pr ON p.parcel_recipient_id = pr.parcel_recipient_id
+JOIN parcel_sender AS ps ON p.parcel_sender_id = ps.parcel_sender_id");
+$stmt->execute();
+$data = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
-<html>
+<html data-bs-theme="dark">
 
 <head>
     <title>Employee Self-Service - iParcel</title>
@@ -56,8 +50,8 @@ $user = $stmt->fetch();
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark bg-body-tertiary" style="width: 280px;">
-                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary col-2">
+                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
                     <img src="../img/logo-white.svg" alt="Logo" width="150" class="d-inline-block align-text-top">
                 </a>
                 <hr>
@@ -81,9 +75,9 @@ $user = $stmt->fetch();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="parcels.php" class="nav-link active" aria-current="page">
+                        <a href="parcels.php" class="nav-link text-white active" aria-current="page">
                             <i class="bi bi-box2"></i>
-                            Parcels
+                            Logistics
                         </a>
                     </li>
                     <li class="nav-item">
@@ -95,136 +89,35 @@ $user = $stmt->fetch();
                 </ul>
                 <hr>
                 <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         <strong><?= $user["name"]; ?></strong>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-dark text-small">
+                    <ul class="dropdown-menu text-small">
                         <li><a class="dropdown-item" href="ess-logout.php">Logout</a></li>
                     </ul>
                 </div>
             </div>
-            <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4 py-4" style="height: 100vh">
-
-                <div class="card">
-                    <h5 class="card-header">Employees</h5>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Employee ID</th>
-                                        <th scope="col">Last Name</th>
-                                        <th scope="col">First Name</th>
-                                        <th scope="col">Department</th>
-                                        <th scope="col"># of Hours</th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">3924722</th>
-                                        <td>Patel</td>
-                                        <td>Ashna</td>
-                                        <td>Sales</td>
-                                        <td>34.3</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2847233</th>
-                                        <td>Galvan</td>
-                                        <td>Rafael</td>
-                                        <td>Support</td>
-                                        <td>40.5</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">0264228</th>
-                                        <td>Jahanara</td>
-                                        <td>Sonny</td>
-                                        <td>Sales</td>
-                                        <td>32.4</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">7296104</th>
-                                        <td>Won</td>
-                                        <td>Brandon</td>
-                                        <td>Sorting</td>
-                                        <td>30.6</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">6452046</th>
-                                        <td>Mullen</td>
-                                        <td>Jason</td>
-                                        <td>Sorting</td>
-                                        <td>26.6</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1746395</th>
-                                        <td>Gomez</td>
-                                        <td>Selena</td>
-                                        <td>Fullfillment</td>
-                                        <td>18.5</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">4629562</th>
-                                        <td>McIngvale</td>
-                                        <td>James</td>
-                                        <td>Sales</td>
-                                        <td>40.3</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">8452946</th>
-                                        <td>Doe</td>
-                                        <td>John</td>
-                                        <td>Manager</td>
-                                        <td>35.7</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">1749361</th>
-                                        <td>Rincon</td>
-                                        <td>Carlos</td>
-                                        <td>Sales</td>
-                                        <td>39.4</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">9463295</th>
-                                        <td>Parker</td>
-                                        <td>Peter</td>
-                                        <td>Fulfillment</td>
-                                        <td>14.6</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3194566</th>
-                                        <td>Khator</td>
-                                        <td>Renu</td>
-                                        <td>Sorting</td>
-                                        <td>24.4</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">8452856</th>
-                                        <td>Smith</td>
-                                        <td>Sally</td>
-                                        <td>Sorting</td>
-                                        <td>29.2</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3716590</th>
-                                        <td>Johnson</td>
-                                        <td>John</td>
-                                        <td>Fulfillment</td>
-                                        <td>40.2</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">4729562</th>
-                                        <td>Rogers</td>
-                                        <td>Chris</td>
-                                        <td>Sales</td>
-                                        <td>39.5</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <a href="#" class="btn btn-block btn-light">View all</a>
-                    </div>
-                </div>
+            <main class="col px-md-4 py-4" style="height: 100vh">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Sender city</th>
+                            <th scope="col">Recipient city</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($data as $item) : ?>
+                            <tr>
+                                <th scope="row"><?= $item["parcel_id"]; ?></th>
+                                <td><?= $item["sender_city"]; ?>, <?= convertState($item["sender_state"]) ?></td>
+                                <td><?= $item["recipient_city"]; ?>, <?= convertState($item["recipient_state"]) ?></td>
+                                <td><?= getDeliveryStatus($item["status"]); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
                 <footer class="pt-5 d-flex justify-content-between">
                     <span>Copyright © 2023 iParcel</span>
                 </footer>

@@ -16,8 +16,6 @@ $stmt = $dbConn->prepare("SELECT * FROM parcels WHERE code = ?");
 $stmt->execute([$tracknum]);
 if ($stmt->rowCount() > 0) {
     $parcel = $stmt->fetch();
-    $parcel = $parcel['status'];
-    $parcel = getDeliveryStatus($parcel);
 } else {
     $parcel = "That parcel could not be found in the system.";
 }
@@ -50,7 +48,7 @@ if ($stmt->rowCount() > 0) {
             <div class="card-body p-4">
   
                 <div class="d-flex justify-content-center align-items-center">
-                    <form action="#" method="POST">
+                    <form action="trucking.php" method="POST">
                         <label for="tracknum">Enter Tracking Number : </label>
                         <input type="text" id="tracknum" name="tracknum" required>
                         <button class="btn bg-primary text-white" type="submit">Track order details</button>
@@ -73,7 +71,11 @@ if ($stmt->rowCount() > 0) {
                     <div class="d-flex flex-row justify-content-between align-items-center" id="status">
                         <tr>
                             <td style="padding: 10px;" >Status : </td>
-                            <td><?php echo $parcel; ?></td>
+                            <td><?php echo getDeliveryStatus($parcel["status"]); ?></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;" >Delivery Date : </td>
+                            <td><?php echo $parcel["delivery_date_at"]; ?></td>
                         </tr>
                     </div>
 
