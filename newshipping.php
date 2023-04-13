@@ -1,10 +1,14 @@
 <?php
-define('IN_APP', 1);
+define('APP_RUNNING', 1);
 
 ob_start();
 session_start();
 
 require_once 'globals.include.php';
+
+$stmt = $dbConn->prepare("SELECT * FROM parcel_method");
+$stmt->execute();
+$parcelMethods = $stmt->fetchAll();
 
 if (isset($_POST["submit"])) {
     // Start with the sender
@@ -60,16 +64,18 @@ if (isset($_POST["submit"])) {
     $weight = (float)$_POST["weight"];
     $method = (int)$_POST["method"];
     $code = generateRandomString();
+    $offset_days = rand(3,12);
+    $delivery_at = new \DateTime('now +'.$offset_days.' day');
 
     if (isset($_SESSION["user"])) {
         $user_id = $_SESSION["user"];
         $stmt = $dbConn->prepare("INSERT INTO parcels
-        (parcel_id,status,weight,code,shipping_method,parcel_sender_id,parcel_recipient_id,user_id)
+        (parcel_id,status,weight,code,shipping_method,parcel_sender_id,parcel_recipient_id,user_id,expected_delivery_at)
         VALUES(:parcel_id,0,:weight,:code,:method,:from_id,:to_id,:user_id)");
     } else {
         $stmt = $dbConn->prepare("INSERT INTO parcels
-        (parcel_id,status,weight,code,shipping_method,parcel_sender_id,parcel_recipient_id,user_id)
-        VALUES(:parcel_id,0,:weight,:code,:method,:from_id,:to_id,0)");
+        (parcel_id,status,weight,code,shipping_method,parcel_sender_id,parcel_recipient_id,user_id,expected_delivery_at)
+        VALUES(:parcel_id,0,:weight,:code,:method,:from_id,:to_id,0,:delivery_at)");
     }
     $stmt->bindParam(":parcel_id", $parcel_id);
     $stmt->bindParam(":weight", $weight);
@@ -77,11 +83,56 @@ if (isset($_POST["submit"])) {
     $stmt->bindParam(":method", $method);
     $stmt->bindParam(":from_id", $from_id);
     $stmt->bindParam(":to_id", $to_id);
+    $stmt->bindParam(":delivery_at", $delivery_at);
     if (isset($_SESSION["user"])) {
         $user_id = $_SESSION["user"];
         $stmt->bindParam(":user_id", $user_id);
     }
     $stmt->execute();
+
+    // Save the payment
+    $transaction_id = guidv4();
+    $total = 0;
+    foreach ($parcelMethods as $parcelMethod) {
+        if ($parcelMethod["parcel_method_id"] == $method) {
+            $total = $parcelMethod["price"];
+        }
+    }
+    $total = 12.0;
+    $status_paid = 1; // paid
+    $cc_name = $_POST["cc_name"];
+    $cc_number = $_POST["cc_number"];
+    $cc_exp = $_POST["cc_expiration"];
+    $cc_cvv = $_POST["cc_cvv"];
+
+    if (isset($_SESSION["user"])) {
+        $user_id = $_SESSION["user"];
+        $stmt = $dbConn->prepare("INSERT INTO transactions
+        (transaction_id,total,status,cc_name,cc_number,cc_exp,cc_cvv,user_id)
+        VALUES(:transaction_id,:total,:status,:cc_name,:cc_number,:cc_exp,:cc_cvv,:user_id)");
+        $stmt->bindParam(":transaction_id", $transaction_id);
+        $stmt->bindParam(":total", $total);
+        $stmt->bindParam(":status", $status_paid);
+        $stmt->bindParam(":cc_name", $cc_name);
+        $stmt->bindParam(":cc_number", $cc_number);
+        $stmt->bindParam(":cc_exp", $cc_exp);
+        $stmt->bindParam(":cc_cvv", $cc_cvv);
+        $stmt->bindParam(":user_id", $user_id);
+    } else {
+        $stmt = $dbConn->prepare("INSERT INTO transactions
+        (transaction_id,total,status,cc_name,cc_number,cc_exp,cc_cvv,user_id)
+        VALUES(:transaction_id,:total,:status,:cc_name,:cc_number,:cc_exp,:cc_cvv,0)");
+        $stmt->bindParam(":transaction_id", $transaction_id);
+        $stmt->bindParam(":total", $total);
+        $stmt->bindParam(":status", $status_paid);
+        $stmt->bindParam(":cc_name", $cc_name);
+        $stmt->bindParam(":cc_number", $cc_number);
+        $stmt->bindParam(":cc_exp", $cc_exp);
+        $stmt->bindParam(":cc_cvv", $cc_cvv);
+    }
+    $stmt->execute();
+
+    header("Location: /viewtracking.php?tracknum=".$code);
 }
 
 ?>
@@ -108,34 +159,23 @@ if (isset($_POST["submit"])) {
             <div class="row g-5">
                 <div class="col-md-5 col-lg-4 order-md-last">
                     <h4 class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-primary">Your cart</span>
+                        <span class="text-primary">Shipping options</span>
                     </h4>
-                    <ul class="list-group mb-3" id="cart" style="display: none;position: sticky;">
-                        <li class="list-group-item d-flex justify-content-between lh-sm">
-                            <div>
-                                <h6 class="my-0">Standard Mail</h6>
-                                <small class="text-body-secondary">Priority Mail with tracking delivery in 1-3 business days.</small>
-                            </div>
-                            <span class="text-body-secondary">$7.25</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Total (USD)</span>
-                            <strong>$7.25</strong>
-                        </li>
-                    </ul>
-                    <ul class="list-group mb-3" id="cart-2" style="display: none;">
-                        <li class="list-group-item d-flex justify-content-between lh-sm">
-                            <div>
-                                <h6 class="my-0">Priority Mail</h6>
-                                <small class="text-body-secondary">Priority Mail with tracking delivery in 1-3 business days.</small>
-                            </div>
-                            <span class="text-body-secondary">$15</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Total (USD)</span>
-                            <strong>$15</strong>
-                        </li>
-                    </ul>
+                    <?php foreach ($parcelMethods as $parcelMethod) : ?>
+                        <ul class="list-group mb-3" id="cart">
+                            <li class="list-group-item d-flex justify-content-between lh-sm">
+                                <div>
+                                    <h6 class="my-0"><?= $parcelMethod["name"]; ?></h6>
+                                    <small class="text-body-secondary"><?= $parcelMethod["description"]; ?></small>
+                                </div>
+                                <span class="text-body-secondary">$<?= $parcelMethod["price"]; ?></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Total (USD)</span>
+                                <strong>$<?= $parcelMethod["price"]; ?></strong>
+                            </li>
+                        </ul>
+                    <?php endforeach; ?>
                 </div>
                 <div class="col-md-7 col-lg-8">
                     <h4 class="mb-3">Billing address</h4>
@@ -297,8 +337,9 @@ if (isset($_POST["submit"])) {
                                 <label for="method" class="form-label">Shpping method</label>
                                 <select class="form-select" id="method" name="method" aria-label="Default select example">
                                     <option selected>Choose...</option>
-                                    <option value="0">Standard Mail (6-7 days) + $7.50</option>
-                                    <option value="1">Priority Mail (1-2 days) + $15</option>
+                                    <?php foreach ($parcelMethods as $parcelMethod) : ?>
+                                        <option value="<?= $parcelMethod["parcel_method_id"]; ?>"><?= $parcelMethod["name"]; ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
 
@@ -366,15 +407,7 @@ if (isset($_POST["submit"])) {
             </div>
         </div>
     </div>
-    <script>
-        document.getElementById('method').addEventListener('change', function() {
-            var style = this.value == 1 ? 'block' : 'none';
-            var style2 = this.value == 0 ? 'block' : 'none';
-            document.getElementById('cart').style.display = style;
-            document.getElementById('cart-2').style.display = style2;
-        });
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <?php include 'footer.include.php'; ?>
 </body>
 
 </html>

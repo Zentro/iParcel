@@ -1,0 +1,21 @@
+Options +FollowSymLinks -Indexes
+RewriteEngine On
+
+# Protect the .env file
+<Files .env>
+order allow,deny
+Deny from all
+</Files>
+
+# Block outside access to composer
+RewriteRule ^vendor/(.*)?$ / [F,L]
+RewriteRule ^composer\.(lock|json)$ / [F,L]
+
+# Make the URLs pretty
+RewriteRule ^login$ login.php
+RewriteRule ^register$ register.php
+RewriteRule ^logout$ logout.php
+RewriteRule ^about-us$ about-us.php
+RewriteRule ^support$ support.php
+RewriteRule ^profile$ profile.php
+RewriteRule ^dashboard$ dashboard.php

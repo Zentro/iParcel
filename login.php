@@ -1,13 +1,16 @@
 <?php
-define('IN_APP', 1);
+define('APP_RUNNING', 1);
 
 ob_start();
 session_start();
 
-require_once 'globals.include.php';
+require_once './globals.include.php';
+require_once APP_DIR . '/inc/class_loginhandler.php';
+
+$loginHandler = new loginHandler($dbConn);
 
 if (isset($_SESSION["user"])) {
-    header("Location: dashboard.php");
+    header("Location: /dashboard");
 }
 
 $errors = [];
@@ -23,7 +26,7 @@ if (isset($_POST["submit"])) {
         if (!password_verify($password, $user["password"])) {
             array_push($errors, "That password doesn't work for this account. Enter a different account or try a different password.");
         } else {
-            header("Location: dashboard.php");
+            header("Location: /dashboard");
             $_SESSION["user"] = $user["user_id"];
         }
     } else {
@@ -60,7 +63,7 @@ if (isset($_GET["success"])) {
                     <div class="py-4 text-center">
                         <a href="/"><img src="img/logo.svg" alt="iParcel" width="200"></a>
                     </div>
-                    <div class="card shadow">
+                    <div class="card">
                         <div class="card-body">
                             <?php if (!empty($success)) : ?>
                                 <div class="alert alert-success" role="alert">
@@ -74,7 +77,7 @@ if (isset($_GET["success"])) {
                                     <?= $error; ?>
                                 </div>
                             <?php endforeach; ?>
-                            <form action="login.php" method="post">
+                            <form action="/login" method="post">
                                 <div class="mb-3">
                                     <label for="email">Email address</label>
                                     <input type="email" class="form-control" name="email">
@@ -89,8 +92,8 @@ if (isset($_GET["success"])) {
                                 </div>
                                 <button type="submit" name="submit" class="mb-3 w-100 btn btn-lg btn-primary">Login</button>
                                 <div class="mb-3">
-                                    <a href="forgotpw.php">Reset my password</a>
-                                    <a href="newaccount.php">Register</a>
+                                    <a href="/reset-password">Reset my password</a>
+                                    <a href="/register">Register</a>
                                 </div>
                             </form>
                         </div>

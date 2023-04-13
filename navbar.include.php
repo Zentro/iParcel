@@ -1,4 +1,4 @@
-<?php defined('IN_APP') or exit('This file cannot be accessed directly.'); ?>
+<?php defined('APP_RUNNING') or exit('This file cannot be accessed directly.'); ?>
 <nav class="navbar navbar-expand-lg shadow bg-white">
     <div class="container">
         <a class="navbar-brand" href="/">
@@ -16,10 +16,10 @@
                     <a class="nav-link" aria-current="page" href="tracking.php">Tracking</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="about-us.php">About Us</a>
+                    <a class="nav-link" aria-current="page" href="/about-us">About Us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="support.php">Support</a>
+                    <a class="nav-link" aria-current="page" href="/support">Support</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -27,15 +27,15 @@
                     </a>
                     <ul class="dropdown-menu">
                     <?php if (!isset($_SESSION["user"])): ?>
-                        <li><a class="dropdown-item" href="login.php">Login</a></li>
-                        <li><a class="dropdown-item" href="newaccount.php">Register</a></li>
+                        <li><a class="dropdown-item" href="/login">Login</a></li>
+                        <li><a class="dropdown-item" href="/register">Register</a></li>
                     <?php else: ?>
-                        <li><a class="dropdown-item" href="profile.php">Profile</a></li>
-                        <li><a class="dropdown-item" href="dashboard.php">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                        <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                        <li><a class="dropdown-item" href="/logout">Logout</a></li>
                     <?php endif; ?>
                     </ul>
                 </li>

@@ -10,26 +10,6 @@ if (!isset($_SESSION["employee"])) {
 
 require_once '../globals.include.php';
 
-// Get # of customers
-$stmt = $dbConn->prepare("SELECT COUNT(*) FROM users");
-$stmt->execute();
-$customer_count = $stmt->fetchColumn();
-
-// Get total of revenue
-$stmt = $dbConn->prepare("SELECT SUM(total) FROM transactions");
-$stmt->execute();
-$revenue_sum = $stmt->fetchColumn();
-
-// Get purchases
-$stmt = $dbConn->prepare("SELECT COUNT(*) FROM transactions");
-$stmt->execute();
-$purchase_count = $stmt->fetchColumn();
-
-// Get # of packages
-$stmt = $dbConn->prepare("SELECT COUNT(*) FROM parcels");
-$stmt->execute();
-$parcel_count = $stmt->fetchColumn();
-
 // Get the user
 $ssn = $_SESSION["employee"];
 $stmt = $dbConn->prepare("SELECT users.*, employees.* FROM users, employees WHERE users.user_id = employees.user_id AND employees.employee_ssn = :ssn");
@@ -63,7 +43,7 @@ $user = $stmt->fetch();
                 <hr>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
-                        <a href="index.php" class="nav-link text-white active" aria-current="page">
+                        <a href="index.php" class="nav-link text-white">
                             <i class="bi bi-house"></i>
                             Dashboard
                         </a>
@@ -93,7 +73,7 @@ $user = $stmt->fetch();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="reports.php" class="nav-link text-white">
+                        <a href="reports.php" class="nav-link text-white active" aria-current="page">
                             <i class="bi bi-clipboard-data"></i>
                             Reports
                         </a>
@@ -102,7 +82,7 @@ $user = $stmt->fetch();
                 <hr>
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <strong><?=$user["name"];?></strong>
+                        <strong><?= $user["name"]; ?></strong>
                     </a>
                     <ul class="dropdown-menu text-small">
                         <li><a class="dropdown-item" href="ess-logout.php">Logout</a></li>
@@ -110,37 +90,32 @@ $user = $stmt->fetch();
                 </div>
             </div>
             <main class="col px-md-4 py-4" style="height: 100vh">
-                <h1 class="h2">Welcome back, <?=$user["name"];?> </h1>
-                <div class="row my-4">
-                    <div class="col-12 col-md-6 col-lg-3 mb-4 mb-lg-0">
+                <h4>Generate and view reports</h4>
+                <div class="row">
+                    <div class="col-3">
                         <div class="card">
-                            <h5 class="card-header">Customers</h5>
                             <div class="card-body">
-                                <h5 class="card-title"><?=$customer_count;?></h5>
+                                <h5 class="card-title">View reports on same-state delivery</h5>
+                                <p class="card-text">Generate and view a report on all delveries made in the same state between the recipient and sender.</p>
+                                <a href="#" class="btn btn-dark"><i class="bi bi-send-plus"></i> Generate report</a>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 mb-4 mb-lg-0 col-lg-3">
+                    <div class="col-3">
                         <div class="card">
-                            <h5 class="card-header">Revenue</h5>
                             <div class="card-body">
-                                <h5 class="card-title">$<?=$revenue_sum;?></h5>
+                                <h5 class="card-title">View reports on most frequent company senders</h5>
+                                <p class="card-text">Generate a report to view the most frequent company sender and their associated revenue from transactions.</p>
+                                <a href="#" class="btn btn-dark"><i class="bi bi-send-plus"></i> Generate report</a>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 mb-4 mb-lg-0 col-lg-3">
+                    <div class="col-3">
                         <div class="card">
-                            <h5 class="card-header">Purchases</h5>
                             <div class="card-body">
-                                <h5 class="card-title"><?=$purchase_count;?></h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 mb-4 mb-lg-0 col-lg-3">
-                        <div class="card">
-                            <h5 class="card-header">Parcels</h5>
-                            <div class="card-body">
-                                <h5 class="card-title"><?=$parcel_count;?></h5>
+                                <h5 class="card-title">View reports on late deliveries and their types</h5>
+                                <p class="card-text">Generate a report to view all late delveries as flagged by the DBMS.</p>
+                                <a href="#" class="btn btn-dark"><i class="bi bi-send-plus"></i> Generate report</a>
                             </div>
                         </div>
                     </div>
@@ -152,27 +127,6 @@ $user = $stmt->fetch();
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
-    <script>
-        new Chartist.Line('#traffic-chart', {
-            labels: ['Jan', 'Feb', 'March', 'April', 'May', 'June'],
-            series: [
-                [2000, 2500, 1900, 3400, 5600, 6400]
-            ]
-        }, {
-            low: 0,
-            showArea: true
-        });
-        new Chartist.Line('#traffic-chart2', {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 5'],
-            series: [
-                [20, 40, 35, 42, 29, 38]
-            ]
-        }, {
-            low: 0,
-            showArea: true
-        });
-    </script>
 </body>
 
 </html>

@@ -1,5 +1,5 @@
 <?php 
-defined('IN_APP') or exit('This file cannot be accessed directly.'); 
+defined('APP_RUNNING') or exit('This file cannot be accessed directly.'); 
 
 if (!empty($_SESSION["user"])) {
     $uid = $_SESSION["user"];

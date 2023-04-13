@@ -1,5 +1,5 @@
 <?php
-define('IN_APP', 1);
+define('APP_RUNNING', 1);
 
 ob_start();
 session_start();
@@ -7,32 +7,41 @@ session_start();
 require_once 'globals.include.php';
 
 if (isset($_SESSION["user"])) {
-    header("Location: dashbaord.php");
+    header("Location: /dashboard");
 }
 
 $errors = [];
 
 if (isset($_POST["submit"])) {
-    $name = $_POST["name"]; // change this to first and last name
+    $name = $_POST["name"];
     $email = $_POST["email"];
-    $password = $_POST["password"];
-    $repeat_password = $_POST["repeat_password"];
-    $phone = $_POST["phone"];
-    if ($password != $repeat_password) {
-        array_push($errors, "Your passwords don't match. They must match.");
-    } else {
-        $user_id = guidv4();
-        $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $dbConn->prepare("INSERT INTO users 
+    // emails must be unique, last ditch effort before SQL unique key
+    $stmt = $dbConn->prepare("SELECT email FROM users WHERE email =:email");
+    $stmt->bindParam(":email", $email);
+    $stmt->execute();
+    if ($stmt->rowCount() == 0) {
+
+        $password = $_POST["password"];
+        $repeat_password = $_POST["repeat_password"];
+        $phone = $_POST["phone"];
+        if ($password != $repeat_password) {
+            array_push($errors, "Your passwords don't match. They must match.");
+        } else {
+            $user_id = guidv4();
+            $password_hash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $dbConn->prepare("INSERT INTO users 
         (user_id, name, email, password, phone, user_group_id, user_group_role_id, email_confirmed) 
         VALUES (:user_id,:name,:email,:password,:phone,0,0,0)");
-        $stmt->bindParam(":user_id", $user_id);
-        $stmt->bindParam(":name", $name);
-        $stmt->bindParam(":email", $email);
-        $stmt->bindParam(":password", $password_hash);
-        $stmt->bindParam(":phone", $phone);
-        $stmt->execute();
-        header("Location: login.php?success=true");
+            $stmt->bindParam(":user_id", $user_id);
+            $stmt->bindParam(":name", $name);
+            $stmt->bindParam(":email", $email);
+            $stmt->bindParam(":password", $password_hash);
+            $stmt->bindParam(":phone", $phone);
+            $stmt->execute();
+            header("Location: /login?success=true");
+        }
+    } else {
+        array_push($errors, "That account already exists with that email. Please use a different email or login to that account.");
     }
 }
 ?>
@@ -59,7 +68,7 @@ if (isset($_POST["submit"])) {
                     <div class="py-4 text-center">
                         <a href="/"><img src="img/logo.svg" alt="iParcel" width="200"></a>
                     </div>
-                    <div class="card shadow">
+                    <div class="card">
                         <div class="card-body">
                             <?php foreach ($errors as $error) : ?>
                                 <div class="alert alert-danger" role="alert">
@@ -67,7 +76,7 @@ if (isset($_POST["submit"])) {
                                     <?= $error; ?>
                                 </div>
                             <?php endforeach; ?>
-                            <form action="newaccount.php" method="post">
+                            <form action="/register" method="post">
                                 <div class="mb-3">
                                     <label for="name">Name</label>
                                     <input type="text" class="form-control" name="name">
@@ -90,7 +99,7 @@ if (isset($_POST["submit"])) {
                                 </div>
                                 <button type="submit" name="submit" class="mb-3 w-100 btn btn-lg btn-primary">Register</button>
                                 <div class="mb-3">
-                                    <a href="login.php">Login</a>
+                                    <a href="/login">Login</a>
                                 </div>
                             </form>
                         </div>
