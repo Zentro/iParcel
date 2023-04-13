@@ -122,7 +122,6 @@ if (isset($_GET["success"])) {
                                 <td><?= $customer["name"]; ?></td>
                                 <td><?= $customer["email"]; ?></td>
                                 <td><?= $customer["phone"]; ?></td>
-                                <td></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

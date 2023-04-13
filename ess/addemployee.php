@@ -15,21 +15,40 @@ $ssn = $_SESSION["employee"];
 $stmt = $dbConn->prepare("SELECT users.*, employees.* FROM users, employees WHERE users.user_id = employees.user_id AND employees.employee_ssn = :ssn");
 $stmt->bindParam(":ssn", $ssn);
 $stmt->execute();
-$user = $stmt->fetch();
+$user2 = $stmt->fetch();
 
-// Get employees
-$stmt = $dbConn->prepare("SELECT
-t.transaction_id AS tid,
-t.total,
-t.user_id,
-t.status,
-t.paid_on,
-t.cc_name,
-CASE WHEN t.user_id = '0' THEN 'Guest' ELSE u.name END AS name
-FROM transactions AS t
-LEFT JOIN users AS u ON t.user_id = u.user_id");
+// Get the departments
+$stmt = $dbConn->prepare("SELECT * FROM employee_departments");
 $stmt->execute();
-$transactions = $stmt->fetchAll();
+$deps = $stmt->fetchAll();
+
+$errors = [];
+
+if (isset($_POST["submit"])) {
+    $name = $_POST["name"];
+    $email = $_POST["email"];
+    $department = (int)$_POST["department"];
+    $stmt = $dbConn->prepare("SELECT email,user_id FROM users WHERE email =:email");
+    $stmt->bindParam(":email", $email);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $user = $stmt->fetch();
+        $user_id = $user["user_id"];
+        $new_ssn = generate_employee_ssn();
+        $stmt = $dbConn->prepare("INSERT INTO employees (employee_ssn, user_id, employee_dep_id) VALUES(:new_ssn, :user_id, :dep)");
+        $stmt->bindParam(":new_ssn", $new_ssn);
+        $stmt->bindParam(":user_id", $user_id);
+        $stmt->bindParam(":dep",$department);
+        $stmt->execute();
+        header("Location: employees.php?success=true");
+    } else {
+        array_push($errors, "That account could not be found with that email or name.");
+    }
+}
+
+if (isset($_POST["delete"])) {
+}
 ?>
 <!DOCTYPE html>
 <html data-bs-theme="dark">
@@ -62,13 +81,13 @@ $transactions = $stmt->fetchAll();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="employees.php" class="nav-link text-white">
+                        <a href="employees.php" class="nav-link text-white active" aria-current="page">
                             <i class="bi bi-person-badge"></i>
                             Employees
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="transactions.php" class="nav-link text-white active" aria-current="page">
+                        <a href="transactions.php" class="nav-link text-white">
                             <i class="bi bi-currency-dollar"></i>
                             Transactions
                         </a>
@@ -89,7 +108,7 @@ $transactions = $stmt->fetchAll();
                 <hr>
                 <div class="dropdown">
                     <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <strong><?= $user["name"]; ?></strong>
+                        <strong><?= $user2["name"]; ?></strong>
                     </a>
                     <ul class="dropdown-menu text-small">
                         <li><a class="dropdown-item" href="ess-logout.php">Logout</a></li>
@@ -97,29 +116,36 @@ $transactions = $stmt->fetchAll();
                 </div>
             </div>
             <main class="col px-md-4 py-4" style="height: 100vh">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th scope="col">Transaction ID</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Paid on</th>
-                            <th scope="col">Customer</th>
-                            <th scope="col">Name on card</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach($transactions as $transaction) : ?>
-                            <tr>
-                                <th scope="row"><a href="employees?=edit"><?= $transaction["tid"]; ?></a></th>
-                                <td><?= getPaidStatus($transaction["status"]); ?></td>
-                                <td><?= $transaction["paid_on"]; ?></td>
-                                <td><?= $transaction["name"]; ?></td>
-                                <td><?= $transaction["cc_name"]; ?></td>
-                                <td></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                <h4><a href="employees.php"><i class="bi bi-arrow-left"></i> Go back</a></h4>
+                <?php foreach ($errors as $error) : ?>
+                    <div class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <?= $error; ?>
+                    </div>
+                <?php endforeach; ?>
+                <form action="addemployee.php" method="post">
+                    <h4 class="mb-3">Add an employee, click <strong>Go back</strong> to abort any changes</h4>
+                    <div class="mb-3">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email">Email address</label>
+                        <input type="email" class="form-control" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="department" class="form-label">Departments</label>
+                        <select class="form-select" id="department" name="department" aria-label="Default select example">
+                            <option selected>Choose...</option>
+                            <?php foreach ($deps as $dep) : ?>
+                                <option value="<?= $dep["employee_dep_id"]; ?>"><?= $dep["name"]; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <hr class="my-4">
+                    <button type="submit" name="submit" class="mb-3 btn btn-lg btn-primary">Add</button>
+                </form>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
                 <footer class="pt-5 d-flex justify-content-between">
                     <span>Copyright © 2023 iParcel</span>
                 </footer>

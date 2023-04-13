@@ -57,7 +57,7 @@ $user = $stmt->fetch();
     <div class="container-fluid">
         <div class="row">
             <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary col-2">
-                <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
+                <a href="index.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
                     <img src="../img/logo-white.svg" alt="Logo" width="150" class="d-inline-block align-text-top">
                 </a>
                 <hr>
@@ -92,6 +92,12 @@ $user = $stmt->fetch();
                             Customers
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="reports.php" class="nav-link text-white">
+                            <i class="bi bi-clipboard-data"></i>
+                            Reports
+                        </a>
+                    </li>
                 </ul>
                 <hr>
                 <div class="dropdown">
@@ -111,7 +117,6 @@ $user = $stmt->fetch();
                             <h5 class="card-header">Customers</h5>
                             <div class="card-body">
                                 <h5 class="card-title"><?=$customer_count;?></h5>
-                                <p class="card-text text-success">18.2% increase since last month</p>
                             </div>
                         </div>
                     </div>
@@ -120,7 +125,6 @@ $user = $stmt->fetch();
                             <h5 class="card-header">Revenue</h5>
                             <div class="card-body">
                                 <h5 class="card-title">$<?=$revenue_sum;?></h5>
-                                <p class="card-text text-success">4.6% increase since last month</p>
                             </div>
                         </div>
                     </div>
@@ -129,7 +133,6 @@ $user = $stmt->fetch();
                             <h5 class="card-header">Purchases</h5>
                             <div class="card-body">
                                 <h5 class="card-title"><?=$purchase_count;?></h5>
-                                <p class="card-text text-success">2.5% increase since last month</p>
                             </div>
                         </div>
                     </div>
@@ -138,95 +141,6 @@ $user = $stmt->fetch();
                             <h5 class="card-header">Parcels</h5>
                             <div class="card-body">
                                 <h5 class="card-title"><?=$parcel_count;?></h5>
-                                <p class="card-text text-danger">2.6% decrease since last month</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12 col-xl-8 mb-4 mb-lg-0">
-                        <div class="card">
-                            <h5 class="card-header">Latest transactions</h5>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Order</th>
-                                                <th scope="col">Product</th>
-                                                <th scope="col">Customer</th>
-                                                <th scope="col">Total</th>
-                                                <th scope="col">Date</th>
-                                                <th scope="col"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <th scope="row">17371705</th>
-                                                <td>Priority</td>
-                                                <td>uramamur@bcm.edu</td>
-                                                <td>$25.23</td>
-                                                <td>April 11 2023</td>
-                                                <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">17370540</th>
-                                                <td>Priority</td>
-                                                <td>gocoogs@uh.edu</td>
-                                                <td>$80.50</td>
-                                                <td>April 11 2023</td>
-                                                <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">17371705</th>
-                                                <td>Priority</td>
-                                                <td>cchao6@cougarnet.uh.edu</td>
-                                                <td>$62.11</td>
-                                                <td>April 10 2023</td>
-                                                <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">17370540</th>
-                                                <td>Standard</td>
-                                                <td>CougarNet@uh.edu</td>
-                                                <td>$16.19</td>
-                                                <td>April 10 2023</td>
-                                                <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">17371705</th>
-                                                <td>Standard</td>
-                                                <td>databasesystems@cougarnet.edu</td>
-                                                <td>$18.69</td>
-                                                <td>April 10 2023</td>
-                                                <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <th scope="row">17370540</th>
-                                                <td>Priority</td>
-                                                <td>johndoe@gmail.com</td>
-                                                <td>$26.92</td>
-                                                <td>April 10 2023</td>
-                                                <td><a href="#" class="btn btn-sm btn-primary">View</a></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <a href="#" class="btn btn-block btn-dark">View all</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-xl-4">
-                        <div class="card mb-4">
-                            <h5 class="card-header"># Of Packages last 6 months</h5>
-                            <div class="card-body">
-                                <div id="traffic-chart"></div>
-                            </div>
-                        </div>
-                        <div class="card">
-                            <h5 class="card-header">March Time Card</h5>
-                            <div class="card-body">
-                                <div id="traffic-chart2"></div>
                             </div>
                         </div>
                     </div>

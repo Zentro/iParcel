@@ -8,6 +8,12 @@ if (!isset($_SESSION["employee"])) {
     header("Location: ess-login.php");
 }
 
+if (empty($_GET["employee_ssn"])) {
+    header("Location: employees.php?success=false");
+}
+
+$employee_ssn = $_GET["employee_ssn"];
+
 require_once '../globals.include.php';
 
 // Get the user
@@ -17,19 +23,36 @@ $stmt->bindParam(":ssn", $ssn);
 $stmt->execute();
 $user = $stmt->fetch();
 
-// Get employees
-$stmt = $dbConn->prepare("SELECT
-t.transaction_id AS tid,
-t.total,
-t.user_id,
-t.status,
-t.paid_on,
-t.cc_name,
-CASE WHEN t.user_id = '0' THEN 'Guest' ELSE u.name END AS name
-FROM transactions AS t
-LEFT JOIN users AS u ON t.user_id = u.user_id");
+// Get employee
+$stmt = $dbConn->prepare("SELECT users.*, employees.* FROM users, employees WHERE users.user_id = employees.user_id AND employees.employee_ssn = :ssn");
+$stmt->bindParam(":ssn", $employee_ssn);
 $stmt->execute();
-$transactions = $stmt->fetchAll();
+$employee = $stmt->fetch();
+
+// Get the departments
+$stmt = $dbConn->prepare("SELECT * FROM employee_departments");
+$stmt->execute();
+$deps = $stmt->fetchAll();
+
+$dep_id = $user["employee_dep_id"];
+
+if (isset($_POST["save"])) {
+    if (!empty($_POST["department"])) {
+        $dep_id = (int)$_POST["department"];
+    }
+    $stmt = $dbConn->prepare("UPDATE employees SET employee_dep_id = :dep_id WHERE employee_ssn= :employee_ssn");
+    $stmt->bindParam(":dep_id", $dep_id);
+    $stmt->bindParam(":employee_ssn", $employee_ssn);
+    $stmt->execute();
+    header("Location: employees.php?success=true");
+}
+
+if (isset($_POST["delete"])) {
+    $stmt = $dbConn->prepare("DELETE FROM employees WHERE employee_ssn =:ssn");
+    $stmt->bindParam(":ssn", $employee_ssn);
+    $stmt->execute();
+    header("Location: employees.php?success=true");
+}
 ?>
 <!DOCTYPE html>
 <html data-bs-theme="dark">
@@ -68,7 +91,7 @@ $transactions = $stmt->fetchAll();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="transactions.php" class="nav-link text-white active" aria-current="page">
+                        <a href="transactions.php" class="nav-link text-white">
                             <i class="bi bi-currency-dollar"></i>
                             Transactions
                         </a>
@@ -80,7 +103,7 @@ $transactions = $stmt->fetchAll();
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="customers.php" class="nav-link text-white">
+                        <a href="customers.php" class="nav-link text-white active" aria-current="page">
                             <i class="bi bi-person-gear"></i>
                             Customers
                         </a>
@@ -97,29 +120,25 @@ $transactions = $stmt->fetchAll();
                 </div>
             </div>
             <main class="col px-md-4 py-4" style="height: 100vh">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th scope="col">Transaction ID</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Paid on</th>
-                            <th scope="col">Customer</th>
-                            <th scope="col">Name on card</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach($transactions as $transaction) : ?>
-                            <tr>
-                                <th scope="row"><a href="employees?=edit"><?= $transaction["tid"]; ?></a></th>
-                                <td><?= getPaidStatus($transaction["status"]); ?></td>
-                                <td><?= $transaction["paid_on"]; ?></td>
-                                <td><?= $transaction["name"]; ?></td>
-                                <td><?= $transaction["cc_name"]; ?></td>
-                                <td></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                <h4><a href="employees.php"><i class="bi bi-arrow-left"></i> Go back</a></h4>
+                <form action="editemployee.php?employee_ssn=<?= $employee_ssn; ?>" method="post">
+                    <h4 class="mb-3">Adjust or make changes, click <strong>Go back</strong> to abort any changes</h4>
+                    <div class="mb-3">
+                        <div class="mb-3">
+                            <label for="method" class="form-label">Departments</label>
+                            <select class="form-select" id="department" name="department" aria-label="Default select example">
+                                <option selected>Choose...</option>
+                                <?php foreach ($deps as $dep) : ?>
+                                    <option value="<?= $dep["employee_dep_id"]; ?>"><?= $dep["name"]; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <button type="submit" name="save" class="mb-3 btn btn-lg btn-primary">Save changes</button>
+                    <button type="submit" name="delete" class="mb-3 btn btn-lg btn-danger">Remove employee</button>
+                </form>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
                 <footer class="pt-5 d-flex justify-content-between">
                     <span>Copyright © 2023 iParcel</span>
                 </footer>

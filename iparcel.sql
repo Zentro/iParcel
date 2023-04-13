@@ -21,7 +21,7 @@ USE `iparcel_dev`;
 
 -- Dumping structure for table iparcel_dev.employees
 CREATE TABLE IF NOT EXISTS `employees` (
-  `employee_ssn` int NOT NULL,
+  `employee_ssn` varchar(50) NOT NULL DEFAULT '',
   `user_id` varchar(225) NOT NULL DEFAULT '',
   `employee_dep_id` varchar(225) DEFAULT NULL,
   PRIMARY KEY (`employee_ssn`),
@@ -29,9 +29,10 @@ CREATE TABLE IF NOT EXISTS `employees` (
   KEY `employee_dep_id` (`employee_dep_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table iparcel_dev.employees: ~1 rows (approximately)
+-- Dumping data for table iparcel_dev.employees: ~3 rows (approximately)
 INSERT INTO `employees` (`employee_ssn`, `user_id`, `employee_dep_id`) VALUES
-	(1234567890, '3f46422d-55cd-4743-9379-f80cca2b981a', '3');
+	('1234567890', '3f46422d-55cd-4743-9379-f80cca2b981a', '3'),
+	('3719963212', '9f8499ae-3b9c-4aa3-8169-0f519bff2c63', '1');
 
 -- Dumping structure for table iparcel_dev.employee_departments
 CREATE TABLE IF NOT EXISTS `employee_departments` (
@@ -41,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `employee_departments` (
   PRIMARY KEY (`employee_dep_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table iparcel_dev.employee_departments: ~2 rows (approximately)
+-- Dumping data for table iparcel_dev.employee_departments: ~3 rows (approximately)
 INSERT INTO `employee_departments` (`employee_dep_id`, `name`, `description`) VALUES
 	(1, 'Fulfillment', 'Manage parcels'),
 	(2, 'Accounting', 'Manage company finances and billing'),
@@ -174,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table iparcel_dev.users: ~1 rows (approximately)
+-- Dumping data for table iparcel_dev.users: ~4 rows (approximately)
 INSERT INTO `users` (`user_id`, `name`, `password`, `email`, `phone`, `user_group_role_id`, `user_group_id`, `created_at`, `deleted_at`, `email_confirmed`) VALUES
 	('185739fe-e4a0-4147-a3fd-6ab0a80e34b4', 'Demo Demo3', '$2y$10$Ojg1NlwI4XVIwIXQOnwabO0pNvNmhTIe6rx9FzsnbaZE1x0Gx6PQa', 'demo@demo.com', '28182731762', 0, 0, '2023-04-06 01:37:30', '2023-04-12 02:40:45', 0),
 	('1cc786f8-0447-4ba9-ab20-f3ae63bbae47', 'Demo Demo4', '$2y$10$p751u0piZ3b7np7j/UlEWOi88bM6de404vz/J/leIT9l8kAqSnGnu', 'demo3@demo.com', '123', 0, 0, '2023-04-12 02:38:10', NULL, 0),

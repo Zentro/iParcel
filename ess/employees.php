@@ -121,7 +121,7 @@ if (isset($_GET["success"])) {
                     <tbody>
                         <?php foreach ($employees as $employee) : ?>
                             <tr>
-                                <th scope="row"><a href="editemployees.php?ssn="><?= $employee["employee_ssn"]; ?></a></th>
+                                <th scope="row"><a href="editemployee.php?employee_ssn=<?= $employee["employee_ssn"]; ?>"><?= $employee["employee_ssn"]; ?></a></th>
                                 <td><?= $employee["name"]; ?></td>
                                 <td><?= $employee["department_name"]; ?></td>
                             </tr>
