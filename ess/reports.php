@@ -114,8 +114,15 @@ $user = $stmt->fetch();
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">View reports on late deliveries and their types</h5>
-                                <p class="card-text">Generate a report to view all late delveries as flagged by the DBMS.</p>
-                                <a href="#" class="btn btn-dark"><i class="bi bi-send-plus"></i> Generate report</a>
+                                <p class="card-text">Generate a report to view all late delveries as flagged by the DBMS.</p>                
+                                <form action="latedelivery.php" method="get">
+                                    <label for="deliveries" class="form-label">Deliveries</label>
+                                    <select class="form-select" id="deliveries" name="deliveries" required="">
+                                        <option value="">Select an option</option>
+                                        <option value="4">Late deliveries</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-dark mt-3"><i class="bi bi-send-plus"></i> Generate report</i></button>
+                                </form>
                             </div>
                         </div>
                     </div>
