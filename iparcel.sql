@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `parcels` (
   `deleted_at` datetime DEFAULT NULL,
   `expected_delivery_at` datetime DEFAULT NULL,
   `type` int DEFAULT NULL,
+  `transaction_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`parcel_id`),
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
