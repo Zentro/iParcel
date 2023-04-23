@@ -1,6 +1,6 @@
 <?php
 define('APP_RUNNING', 1);
-define('APP_ESS_CUSTOMERS', 1);
+define('APP_ESS_REPORTS', 1);
 
 ob_start();
 session_start();
@@ -18,19 +18,28 @@ $stmt->bindParam(":ssn", $ssn);
 $stmt->execute();
 $user = $stmt->fetch();
 
-// Get employees
-$stmt = $dbConn->prepare("SELECT u.user_id, u.name, u.email, u.phone FROM users AS u WHERE deleted_at IS NULL");
-$stmt->execute();
-$customers = $stmt->fetchAll();
-
-$success = "";
-if (isset($_GET["success"])) {
-    $success = $_GET["success"];
+if (empty($_GET["deliveries"])) {
+    header("Location: reports.php");
 }
 
+$deliveries = $_GET["deliveries"];
+$sql = "SELECT b1.parcel_id, b1.shipping_method, b1.status, b1.type, b1.expected_delivery_at, b2.parcel_sender_id, b3.parcel_recipient_id
+        FROM parcels b1
+        JOIN parcel_sender b2 ON b1.parcel_sender_id = b2.parcel_sender_id
+        JOIN parcel_recipient b3 ON b1.parcel_recipient_id = b3.parcel_recipient_id
+        WHERE b1.status = '$deliveries';";
+
+$stmt = $dbConn->prepare($sql);
+$stmt->execute();
+
+if ($stmt->rowCount() > 0) {
+} else {
+    $late_deliveries = "There are zero late deliveries.";
+}
 ?>
-<!DOCTYPE html>
+
 <html data-bs-theme="dark">
+<html>
 
 <head>
     <title>Employee Self-Service - iParcel</title>
@@ -49,48 +58,39 @@ if (isset($_GET["success"])) {
         <div class="row">
             <?php include 'sidebar.include.php'; ?>
             <main class="col px-md-4 py-4" style="height: 100vh">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Customers</h1>
-                </div>
-                <?php if ($success == "false") : ?>
-                    <div class="alert alert-danger" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill"></i>
-                        Your changes could not be saved.
-                    </div>
-                <?php endif; ?>
-                <?php if ($success == "true") : ?>
-                    <div class="alert alert-success" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill"></i>
-                        Your changes were saved.
-                    </div>
-                <?php endif; ?>
                 <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th scope="col">Customer ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Phone</th>
+                            <th>Parcel ID</th>
+                            <th>Shipping Method</th>
+                            <th>Shipping Status</th>
+                            <th>Shipping Type</th>
+                            <th>Expected Delivery</th>
+                            <th>Sender ID</th>
+                            <th>Recipient ID</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($customers as $customer) : ?>
+                        <?php while ($late_deliveries = $stmt->fetch()) : ?>
                             <tr>
-                                <th scope="row"><a href="editcustomer.php?user_id=<?= $customer["user_id"]; ?>"><?= $customer["user_id"]; ?></a></th>
-                                <td><?= $customer["name"]; ?></td>
-                                <td><?= $customer["email"]; ?></td>
-                                <td><?= $customer["phone"]; ?></td>
+                                <td><?php echo $late_deliveries["parcel_id"]; ?></td>
+                                <td><?php echo $late_deliveries["shipping_method"]; ?></td>
+                                <td><?php echo $late_deliveries["status"]; ?></td>
+                                <td><?php echo $late_deliveries["type"]; ?></td>
+                                <td><?php echo $late_deliveries["expected_delivery_at"]; ?></td>
+                                <td><?php echo $late_deliveries["parcel_sender_id"]; ?></td>
+                                <td><?php echo $late_deliveries["parcel_recipient_id"]; ?></td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php endwhile; ?>
                     </tbody>
                 </table>
-                <a href="addcustomer.php" class="btn btn-dark"><i class="bi bi-person-plus"></i> Create customer</a>
                 <footer class="pt-5 d-flex justify-content-between">
-                    <span>Copyright © 2023 iParcel</span>
+                    <span>© iParcel 2023</span>
                 </footer>
             </main>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
 
 </html>

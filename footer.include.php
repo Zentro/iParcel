@@ -34,7 +34,7 @@
                 <ul class="nav flex-column">
                     <li class="nav-item mb-2"><a href="support.php" class="nav-link p-0 text-body-secondary">Support</a></li>
                     <li class="nav-item mb-2"><a href="about-us.php" class="nav-link p-0 text-body-secondary">About Us</a></li>
-                    <li class="nav-item mb-2"><a href="ess/" class="nav-link p-0 text-body-secondary">ESS</a></li>
+                    <li class="nav-item mb-2"><a href="ess/" class="nav-link p-0 text-body-secondary">Employee Portal</a></li>
                 </ul>
             </div>
         </footer>

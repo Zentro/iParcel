@@ -6,7 +6,7 @@ session_start();
 
 require_once 'globals.include.php';
 
-if(empty($_GET["tracknum"])) {
+if (empty($_GET["tracknum"])) {
     header("Location: tracking.php");
 }
 
@@ -38,54 +38,33 @@ if ($stmt->rowCount() > 0) {
 
 <body>
     <?php include 'navbar.include.php'; ?>
-    
-    <body background="img/Houston-Road-Map.png" style="background-repeat: no-repeat; background-size: cover; background-position-y: -550px;">
-    <section class="vh-100">
     <div class="container py-5 h-100">
-      <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col">
-          <div class="card card-stepper shadow" style="border-radius: 10px;">
-            <div class="card-body p-4">
-  
-                <div class="d-flex justify-content-center align-items-center">
-                    <form action="trucking.php" method="POST">
-                        <label for="tracknum">Enter Tracking Number : </label>
-                        <input type="text" id="tracknum" name="tracknum" required>
-                        <button class="btn bg-primary text-white" type="submit">Track order details</button>
-                    </form>
+        <div class="row">
+            <div class="col">
+                <h2>Tracking Results</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Package Status:</h5>
+                        <?php $dt = new DateTime($parcel["expected_delivery_at"]); ?>
+                        <p class="card-text">Your package is currently <?php echo getDeliveryStatus($parcel["status"]); ?> and scheduled for delivery on <?= $dt->format('l, F j, Y'); ?>. <?php if ($parcel["status"] == 4) : ?>
+                                <span class="badge rounded-pill text-bg-danger">Late</span>
+                            <?php endif; ?>
+                        </p>
+                        <?php if ($parcel["type"] == 1) : ?>
+                            <div class="alert alert-warning" role="alert">
+                                Your package is considered heavy because it is more than 10 pounds. Your billing will reflect that.
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
-              
-                <hr class="my-4">
-                <table>
-
-                    <div class="d-flex flex-row justify-content-between align-items-center align-content-center" id="puttrackhere">
-                    <tr>
-                        <td style="padding: 10px;">Tracking Number : </td>
-                        <td><?php echo $tracknum ?></td>
-                    </tr>
-                    <tr>
-
-                    </tr>
-                    </div>
-
-                    <div class="d-flex flex-row justify-content-between align-items-center" id="status">
-                        <tr>
-                            <td style="padding: 10px;" >Status : </td>
-                            <td><?php echo getDeliveryStatus($parcel["status"]); ?></td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 10px;" >Delivery Date : </td>
-                            <td><?php echo $parcel["delivery_date_at"]; ?></td>
-                        </tr>
-                    </div>
-
-                </table>
             </div>
-          </div>
+            <div class="col">
+                <img src="img/shipping-stock-photo.jpg" class="rounded-3 shadow-lg">
+            </div>
         </div>
-      </div>
     </div>
 
     <?php include 'footer.include.php'; ?>
 </body>
+
 </html>

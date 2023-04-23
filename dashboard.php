@@ -21,7 +21,7 @@ $name = $user["name"];
 $email = $user["email"];
 
 $parcels = [];
-$stmt = $dbConn->prepare("SELECT p.code, p.status, pr.name, pr.company, pr.city, pr.state
+$stmt = $dbConn->prepare("SELECT p.code, p.status, p.type, pr.name, pr.company, pr.city, pr.state
 FROM parcels AS p
 JOIN parcel_recipient AS pr ON p.parcel_recipient_id = pr.parcel_recipient_id
 WHERE p.user_id = :user_id");
@@ -84,7 +84,11 @@ if ($stmt->rowCount() > 0) {
                     <?php foreach ($parcels as $parcel) : ?>
                         <tr>
                             <th><a href="viewtracking.php?tracknum=<?= $parcel["code"]; ?>"><?= $parcel["code"]; ?></a></th>
-                            <th><?= getDeliveryStatus($parcel["status"]); ?></th>
+                            <td><?= getDeliveryStatus($parcel["status"]); ?>
+                                <?php if ($parcel["type"] == 1) : ?>
+                                    <span class="badge rounded-pill text-bg-warning">Heavy</span>
+                                <?php endif; ?>
+                            </td>
                             <th><?= $parcel["name"]; ?></th>
                             <th><?= $parcel["company"]; ?></th>
                             <th><?= $parcel["city"]; ?></th>
@@ -118,7 +122,8 @@ if ($stmt->rowCount() > 0) {
                             <th><?= $transaction["transaction_id"]; ?></th>
                             <th><span class="badge rounded-pill text-bg-success"><?= getPaidStatus($transaction["status"]); ?></span></th>
                             <th>$ <?= $transaction["total"]; ?></th>
-                            <th><?= $transaction["paid_on"]; ?></th>
+                            <?php $dt = new DateTime($transaction["paid_on"]); ?>
+                            <td><?= $dt->format('l, F j, Y'); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

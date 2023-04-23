@@ -67,7 +67,7 @@ if (isset($_POST["submit"])) {
                             <?php endforeach; ?>
                             <form action="ess-login.php" method="post">
                                 <div class="mb-3">
-                                    <label for="ssn">SSN</label>
+                                    <label for="ssn">Employee ID</label>
                                     <input type="text" class="form-control" name="ssn">
                                 </div>
                                 <div class="mb-3">

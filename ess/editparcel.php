@@ -1,6 +1,6 @@
 <?php
 define('APP_RUNNING', 1);
-define('APP_ESS_EMPLOYEES', 1);
+define('APP_ESS_PARCELS', 1);
 
 ob_start();
 session_start();
@@ -9,11 +9,11 @@ if (!isset($_SESSION["employee"])) {
     header("Location: ess-login.php");
 }
 
-if (empty($_GET["employee_ssn"])) {
+if (empty($_GET["parcel_id"])) {
     header("Location: employees.php?success=false");
 }
 
-$employee_ssn = $_GET["employee_ssn"];
+$parcel_id = $_GET["parcel_id"];
 
 require_once '../globals.include.php';
 
@@ -24,28 +24,31 @@ $stmt->bindParam(":ssn", $ssn);
 $stmt->execute();
 $user = $stmt->fetch();
 
-// Get employee
-$stmt = $dbConn->prepare("SELECT users.*, employees.* FROM users, employees WHERE users.user_id = employees.user_id AND employees.employee_ssn = :ssn");
-$stmt->bindParam(":ssn", $employee_ssn);
+// Get the parcel
+$stmt = $dbConn->prepare("SELECT * FROM parcels WHERE parcel_id = :parcel_id");
+$stmt->bindParam(":parcel_id", $parcel_id);
 $stmt->execute();
-$employee = $stmt->fetch();
-
-// Get the departments
-$stmt = $dbConn->prepare("SELECT * FROM employee_departments");
-$stmt->execute();
-$deps = $stmt->fetchAll();
-
-$dep_id = $user["employee_dep_id"];
+$parcel = $stmt->fetch();
 
 if (isset($_POST["save"])) {
-    if (!empty($_POST["department"])) {
-        $dep_id = (int)$_POST["department"];
+    $new_date = $parcel["expected_delivery_at"];
+    if (isset($_POST["ddate"])) {
+        $dateTimeObj = DateTime::createFromFormat('Y-m-d', $_POST["ddate"]);
+        if ($dateTimeObj === true) {
+            $new_date = $dateTimeObj->format('Y-m-d H:i:s');
+        }
     }
-    $stmt = $dbConn->prepare("UPDATE employees SET employee_dep_id = :dep_id WHERE employee_ssn= :employee_ssn");
-    $stmt->bindParam(":dep_id", $dep_id);
-    $stmt->bindParam(":employee_ssn", $employee_ssn);
+    $status = $parcel["status"];
+    if (isset($_POST["status"])) {
+        $status = (int)$_POST["status"];
+    }
+
+    $stmt = $dbConn->prepare("UPDATE parcels SET expected_delivery_at = :new_date, status = :status WHERE parcel_id = :parcel_id");
+    $stmt->bindParam(":new_date", $new_date);
+    $stmt->bindParam(":status", $status);
+    $stmt->bindParam(":parcel_id", $parcel_id);
     $stmt->execute();
-    header("Location: employees.php?success=true");
+    header("Location: parcels.php?success=true");
 }
 
 if (isset($_POST["delete"])) {
@@ -75,23 +78,41 @@ if (isset($_POST["delete"])) {
         <div class="row">
             <?php include 'sidebar.include.php'; ?>
             <main class="col px-md-4 py-4" style="height: 100vh">
-                <h4><a href="employees.php"><i class="bi bi-arrow-left"></i> Go back</a></h4>
-                <form action="editemployee.php?employee_ssn=<?= $employee_ssn; ?>" method="post">
+                <h4><a href="parcels.php"><i class="bi bi-arrow-left"></i> Go back</a></h4>
+                <form action="editparcel.php?parcel_id=<?= $parcel_id; ?>" method="post">
                     <h4 class="mb-3">Adjust or make changes, click <strong>Go back</strong> to abort any changes</h4>
                     <div class="mb-3">
                         <div class="mb-3">
-                            <label for="method" class="form-label">Departments</label>
-                            <select class="form-select" id="department" name="department" aria-label="Default select example">
-                                <option selected>Choose...</option>
-                                <?php foreach ($deps as $dep) : ?>
-                                    <option value="<?= $dep["employee_dep_id"]; ?>"><?= $dep["name"]; ?></option>
-                                <?php endforeach; ?>
+                            <label for="ddate" class="form-label">Set new delivery date</label>
+                            <?php if($parcel["status"] == 3) : ?>
+                            <input type="date" id="new_delivery_date" name="ddate" class="form-control" disabled>
+                            <?php else: ?>
+                            <input type="date" id="new_delivery_date" name="ddate" class="form-control">
+                            <?php endif; ?>
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Set tracking status</label>
+                            <?php if($parcel["status"] == 3) : ?>
+                            <select class="form-select" id="status" name="status" disabled>
+                                <option value="">Choose...</option>
+                                <option value="0">Pre-shipment</option>
+                                <option value="1">In Transit</option>
+                                <option value="2">Out For Delivery</option>
+                                <option value="3">Delivered</option>
                             </select>
+                            <?php else: ?>
+                                <select class="form-select" id="status" name="status">
+                                <option value="">Choose...</option>
+                                <option value="0">Pre-shipment</option>
+                                <option value="1">In Transit</option>
+                                <option value="2">Out For Delivery</option>
+                                <option value="3">Delivered</option>
+                            </select>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <hr class="my-4">
                     <button type="submit" name="save" class="mb-3 btn btn-lg btn-primary">Save changes</button>
-                    <button type="submit" name="delete" class="mb-3 btn btn-lg btn-danger">Remove employee</button>
                 </form>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
                 <footer class="pt-5 d-flex justify-content-between">

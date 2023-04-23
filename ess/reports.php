@@ -1,5 +1,6 @@
 <?php
 define('APP_RUNNING', 1);
+define('APP_ESS_REPORTS', 1);
 
 ob_start();
 session_start();
@@ -36,68 +37,18 @@ $user = $stmt->fetch();
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary col-2">
-                <a href="index.php" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none">
-                    <img src="../img/logo-white.svg" alt="Logo" width="150" class="d-inline-block align-text-top">
-                </a>
-                <hr>
-                <ul class="nav nav-pills flex-column mb-auto">
-                    <li class="nav-item">
-                        <a href="index.php" class="nav-link text-white">
-                            <i class="bi bi-house"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="employees.php" class="nav-link text-white">
-                            <i class="bi bi-person-badge"></i>
-                            Employees
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="transactions.php" class="nav-link text-white">
-                            <i class="bi bi-currency-dollar"></i>
-                            Transactions
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="parcels.php" class="nav-link text-white">
-                            <i class="bi bi-box2"></i>
-                            Logistics
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="customers.php" class="nav-link text-white">
-                            <i class="bi bi-person-gear"></i>
-                            Customers
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="reports.php" class="nav-link text-white active" aria-current="page">
-                            <i class="bi bi-clipboard-data"></i>
-                            Reports
-                        </a>
-                    </li>
-                </ul>
-                <hr>
-                <div class="dropdown">
-                    <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <strong><?= $user["name"]; ?></strong>
-                    </a>
-                    <ul class="dropdown-menu text-small">
-                        <li><a class="dropdown-item" href="ess-logout.php">Logout</a></li>
-                    </ul>
-                </div>
-            </div>
+            <?php include 'sidebar.include.php'; ?>
             <main class="col px-md-4 py-4" style="height: 100vh">
-                <h4>Generate and view reports</h4>
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Generate and view reports</h1>
+                </div>
                 <div class="row">
                     <div class="col-3">
                         <div class="card h-100">
                             <div class="card-body">
                                 <h5 class="card-title">View reports on same-state delivery</h5>
                                 <p class="card-text">Generate and view a report on all delveries made within the same state.</p>
-                                <form action="samestatereports.php" method="get">
+                                <form action="viewsamestatereport.php" method="get">
                                     <label for="state" class="form-label">State</label>
                                     <select class="form-select" id="state" name="state" required="">
                                         <option value="">Select a state</option>
@@ -162,8 +113,10 @@ $user = $stmt->fetch();
                         <div class="card h-100">
                             <div class="card-body">
                                 <h5 class="card-title">View reports on most frequent company senders</h5>
-                                <p class="card-text">Generate a report to view the most frequent company sender and their associated revenue from transactions.</p>
-                                <a href="#" class="btn btn-dark"><i class="bi bi-send-plus"></i> Generate report</a>
+                                <form action="viewfrequentcompanyreport.php" method="get">
+                                    <p class="card-text">Generate a report to view the most frequent company sender and their associated revenue from transactions.</p>
+                                    <button type="submit" class="btn btn-dark mt-3"><i class="bi bi-send-plus"></i> Generate report</i></button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -171,8 +124,8 @@ $user = $stmt->fetch();
                         <div class="card h-100">
                             <div class="card-body">
                                 <h5 class="card-title">View reports on late deliveries and their types</h5>
-                                <p class="card-text">Generate a report to view all late delveries as flagged by the DBMS.</p>                
-                                <form action="latedelivery.php" method="get">
+                                <p class="card-text">Generate a report to view all late delveries as flagged by the DBMS.</p>
+                                <form action="viewlatedeliveriesreport.php" method="get">
                                     <label for="deliveries" class="form-label">Deliveries</label>
                                     <select class="form-select" id="deliveries" name="deliveries" required="">
                                         <option value="">Select an option</option>

@@ -1,6 +1,6 @@
 <?php
 define('APP_RUNNING', 1);
-define('APP_ESS_CUSTOMERS', 1);
+define('APP_ESS_REPORTS', 1);
 
 ob_start();
 session_start();
@@ -18,19 +18,25 @@ $stmt->bindParam(":ssn", $ssn);
 $stmt->execute();
 $user = $stmt->fetch();
 
-// Get employees
-$stmt = $dbConn->prepare("SELECT u.user_id, u.name, u.email, u.phone FROM users AS u WHERE deleted_at IS NULL");
-$stmt->execute();
-$customers = $stmt->fetchAll();
-
-$success = "";
-if (isset($_GET["success"])) {
-    $success = $_GET["success"];
+if (empty($_GET["state"])) {
+    header("Location: reports.php");
 }
 
+$state = $_GET["state"];
+$sql = "SELECT t1.parcel_id, t2.name, t2.address, t2.city, t2.zip, t3.name, t3.address, t3.city, t3.zip 
+        FROM parcels t1
+        JOIN parcel_sender t2 ON t1.parcel_sender_id = t2.parcel_sender_id
+        JOIN parcel_recipient t3 ON t1.parcel_recipient_id = t3.parcel_recipient_id
+        WHERE t2.state = '$state' AND t3.state = '$state';";
+$stmt = $dbConn->prepare($sql);
+$stmt->execute();
+if ($stmt->rowCount() > 0) {
+} else {
+    $found_states = "Can't find any parcels shipped within the selected state.";
+}
 ?>
-<!DOCTYPE html>
 <html data-bs-theme="dark">
+<html>
 
 <head>
     <title>Employee Self-Service - iParcel</title>
@@ -49,48 +55,35 @@ if (isset($_GET["success"])) {
         <div class="row">
             <?php include 'sidebar.include.php'; ?>
             <main class="col px-md-4 py-4" style="height: 100vh">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Customers</h1>
-                </div>
-                <?php if ($success == "false") : ?>
-                    <div class="alert alert-danger" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill"></i>
-                        Your changes could not be saved.
-                    </div>
-                <?php endif; ?>
-                <?php if ($success == "true") : ?>
-                    <div class="alert alert-success" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill"></i>
-                        Your changes were saved.
-                    </div>
-                <?php endif; ?>
                 <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th scope="col">Customer ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Phone</th>
+                            <th>Parcel ID</th>
+                            <th>Sender Name</th>
+                            <th>Sender Address</th>
+                            <th>Recipient Name</th>
+                            <th>Recipient Address</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($customers as $customer) : ?>
+                        <?php while ($found_states = $stmt->fetch()) : ?>
                             <tr>
-                                <th scope="row"><a href="editcustomer.php?user_id=<?= $customer["user_id"]; ?>"><?= $customer["user_id"]; ?></a></th>
-                                <td><?= $customer["name"]; ?></td>
-                                <td><?= $customer["email"]; ?></td>
-                                <td><?= $customer["phone"]; ?></td>
+                                <td><?php echo $found_states["parcel_id"]; ?></td>
+                                <td><?php echo $found_states[1]; ?></td>
+                                <td><?php echo $found_states[2]; ?></td>
+                                <td><?php echo $found_states["name"]; ?></td>
+                                <td><?php echo $found_states["address"]; ?></td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php endwhile; ?>
                     </tbody>
                 </table>
-                <a href="addcustomer.php" class="btn btn-dark"><i class="bi bi-person-plus"></i> Create customer</a>
                 <footer class="pt-5 d-flex justify-content-between">
-                    <span>Copyright © 2023 iParcel</span>
+                    <span>© iParcel 2023</span>
                 </footer>
             </main>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
 
 </html>

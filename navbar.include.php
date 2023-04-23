@@ -26,6 +26,7 @@
                         <i class="bi bi-person-circle"></i> My account
                     </a>
                     <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="ess/">Employee Portal</a></li>
                     <?php if (!isset($_SESSION["user"])): ?>
                         <li><a class="dropdown-item" href="/login">Login</a></li>
                         <li><a class="dropdown-item" href="/register">Register</a></li>
